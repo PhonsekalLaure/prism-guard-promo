@@ -1,0 +1,381 @@
+/* ==================== HERO ==================== */
+.hero {
+  position: relative;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  margin-top: 60px;
+  overflow: hidden;
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gold);
+  opacity: 0.3;
+  box-shadow: 0 0 15px var(--gold);
+  animation: scan 4s linear infinite;
+  z-index: 3;
+}
+
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.carousel-slide.active { opacity: 1; }
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--navy-dark) 0%, rgba(2,18,38,0.85) 50%, rgba(2,18,38,0.3) 100%);
+  z-index: 2;
+}
+
+.hero-bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gold);
+  z-index: 5;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 4;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid rgba(230,178,21,0.6);
+  color: var(--gold);
+  font-family: var(--font-tech);
+  font-size: 12px;
+  margin-bottom: 24px;
+  background: rgba(230,178,21,0.1);
+  backdrop-filter: blur(4px);
+}
+.status-badge .online {
+  color: #fff;
+  font-weight: 600;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.hero-text h1 {
+  font-family: var(--font-header);
+  font-size: 56px;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+}
+.hero-text h1 .gold { 
+  font-family: var(--font-header);
+  color: var(--gold); 
+}
+
+.hero-desc {
+  font-family: var(--font-tech);
+  font-size: 0.85em;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 32px;
+  line-height: 1.8;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 32px;
+  background: var(--gold);
+  color: var(--navy-dark);
+  font-family: var(--font-header);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+}
+.btn-primary:hover {
+  background: #f5c518;
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.btn-outline-white {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 32px;
+  background: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+  font-family: var(--font-header);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-outline-white:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* ==================== STATS BAR ==================== */
+.stats-bar {
+  background: var(--navy);
+  padding: 36px 0;
+  border-bottom: 3px solid var(--gold);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.stat-box {
+  border-left: 3px solid var(--gold);
+  padding-left: 20px;
+}
+.stat-num {
+  font-family: var(--font-header);
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.2;
+}
+.stat-label {
+  font-family: var(--font-tech);
+  font-size: 11px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ==================== REVIEWS / CLIENT FEEDBACK ==================== */
+.reviews-section {
+  background: #fff;
+  padding: 96px 0;
+  position: relative;
+}
+
+/* Diamond pattern overlay for light sections */
+.reviews-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(45deg, rgba(9, 50, 105, 0.06) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(9, 50, 105, 0.06) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(9, 50, 105, 0.06) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(9, 50, 105, 0.06) 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+  pointer-events: none;
+  z-index: 0;
+}
+.reviews-section .container { position: relative; z-index: 1; }
+
+.section-title {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.section-title h2 {
+  font-size: 36px;
+  color: var(--navy-dark);
+  font-weight: 700;
+}
+.section-title-underline {
+  width: 60px;
+  height: 3px;
+  background: var(--gold);
+  margin: 12px auto 0;
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.review-card {
+  background: var(--navy);
+  padding: 32px;
+  position: relative;
+  transition: all 0.3s;
+  overflow: hidden;
+}
+.review-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gold);
+}
+.review-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.review-tag {
+  font-family: var(--font-tech);
+  font-size: 0.85em;
+  color: var(--gold);
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.review-quote {
+  color: rgba(255,255,255,0.8);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.review-client {
+  color: #fff;
+  font-family: var(--font-header);
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+.review-id {
+  font-family: var(--font-tech);
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ==================== GET STARTED / PROTOCOL ==================== */
+.protocol-section {
+  background: var(--navy-dark);
+  padding: 96px 0;
+  position: relative;
+}
+
+/* Diamond pattern for dark sections */
+.protocol-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+  pointer-events: none;
+  z-index: 0;
+}
+.protocol-section .container { position: relative; z-index: 1; }
+
+.protocol-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.protocol-header h2 {
+  font-size: 34px;
+  color: #fff;
+  font-weight: 700;
+}
+.protocol-header .subtitle {
+  font-family: var(--font-tech);
+  font-size: 20px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.protocol-grid {
+  display: flex;
+  gap: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.protocol-card {
+  flex: 1;
+  background: var(--navy);
+  border-left: 4px solid var(--gold);
+  padding: 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  transition: all 0.3s;
+}
+.protocol-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+
+.protocol-info { flex: 1; }
+
+.protocol-card h3 {
+  color: #fff;
+  font-family: var(--font-header);
+  font-size: 15px;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.protocol-steps {
+  font-family: var(--font-tech);
+  font-size: 0.8em;
+  color: rgba(255,255,255,0.55);
+  line-height: 2;
+  margin-bottom: 24px;
+}
+
+.protocol-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.protocol-icon svg {
+  width: 60px;
+  height: 60px;
+  color: var(--gold);
+  opacity: 0.8;
+}
+
+
+/* ==================== HOMEPAGE RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .hero-text h1 { font-size: 36px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .protocol-grid { flex-direction: column; }
+  .protocol-icon { display: none; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+}
