@@ -1,0 +1,164 @@
+/* ==================== OUR CLIENTS ==================== */
+.clients-section {
+  background: #fff;
+  padding: 96px 0;
+  position: relative;
+}
+
+.clients-section .section-title h2 {
+  color: var(--navy-dark);
+}
+
+.clients-panel {
+  background: var(--navy);
+  padding: 48px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.clients-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 60px;
+}
+
+.client-entry {
+  font-family: var(--font-tech);
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.client-entry:last-child {
+  border-bottom: none;
+}
+
+.client-dots {
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 2px;
+}
+
+/* Pagination */
+.clients-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.pagination-arrow {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: var(--font-tech);
+  transition: color 0.3s;
+}
+.pagination-arrow:hover {
+  color: var(--gold);
+}
+
+.pagination-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.pagination-dot.active {
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+.pagination-dot:hover {
+  background: rgba(230,178,21,0.6);
+}
+
+/* ==================== READY TO SECURE ==================== */
+.secure-section {
+  background: var(--navy-dark);
+  padding: 96px 0;
+  position: relative;
+}
+
+.secure-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.03) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.03) 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.secure-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+.secure-title h2 {
+  color: #fff;
+}
+
+.secure-italic {
+  font-style: italic;
+}
+
+.secure-card {
+  max-width: 460px;
+  margin: 0 auto;
+  background: var(--navy);
+  border: 2px solid var(--gold);
+  padding: 40px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.secure-card h3 {
+  font-family: var(--font-header);
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.secure-steps {
+  font-family: var(--font-tech);
+  font-size: 0.8em;
+  color: rgba(255,255,255,0.6);
+  line-height: 2.2;
+  margin-bottom: 28px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  padding-left: 20px;
+}
+
+.secure-card .btn-primary {
+  width: 200px;
+}
+
+
+/* ==================== CLIENTS RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .clients-grid { grid-template-columns: 1fr; }
+  .clients-panel { padding: 28px 20px; }
+  .client-entry { font-size: 12px; }
+  .secure-card { padding: 28px 20px; }
+}
