@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+
+# Old pages
+old_pages/
