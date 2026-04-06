@@ -3,6 +3,7 @@ import MainLayout from '@layouts/MainLayout';
 import Home from '@pages/Home';
 import Services from '@pages/Services';
 import OurClients from '@pages/OurClients';
+import AboutUs from '@pages/AboutUs';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="services" element={<Services />} />
           <Route path="our-clients" element={<OurClients />} />
+          <Route path="about" element={<AboutUs />} />
         </Route>
       </Routes>
     </BrowserRouter>
