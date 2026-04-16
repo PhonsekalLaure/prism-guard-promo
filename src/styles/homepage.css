@@ -364,6 +364,7 @@
   height: 60px;
   color: var(--gold);
   opacity: 0.8;
+  stroke-width: 1.5px;
 }
 
 
