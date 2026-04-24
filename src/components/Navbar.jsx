@@ -7,7 +7,7 @@ const navLinks = [
   { label: 'Our Clients', href: '/our-clients' },
   { label: 'About Us', href: '/about' },
   { label: 'Contact', href: '/contact' },
-  { label: 'Join the Force', href: '/join' },
+  { label: 'Join the Force', href: '/join-the-force' },
 ];
 
 export default function Navbar() {
