@@ -1,0 +1,255 @@
+/* ==================== SERVICES HERO ==================== */
+.services-hero {
+  position: relative;
+  height: 45vh;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  margin-top: 60px;
+  overflow: hidden;
+  background: var(--navy-dark);
+}
+
+.services-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+  z-index: 0;
+}
+
+.services-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.02) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.02) 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.services-hero-bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gold);
+  z-index: 5;
+}
+
+.scope-graphic {
+  position: absolute;
+  right: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 220px;
+  height: 220px;
+  z-index: 2;
+  opacity: 0.7;
+}
+.scope-graphic svg {
+  width: 100%;
+  height: 100%;
+}
+
+.services-hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.services-hero-content h1 {
+  font-family: var(--font-header);
+  font-size: 48px;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+}
+
+/* ==================== SERVICE MODULES ==================== */
+.services-modules {
+  background: #fff;
+  padding: 96px 0;
+  position: relative;
+}
+
+.services-modules .section-title h2 {
+  color: var(--navy-dark);
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.module-card {
+  overflow: hidden;
+  transition: all 0.3s;
+  background: var(--navy);
+}
+.module-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+}
+
+.module-image {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}
+.module-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+.module-card:hover .module-image img {
+  transform: scale(1.05);
+}
+
+.module-image-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: var(--gold);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.module-body {
+  padding: 28px;
+}
+
+.module-title {
+  font-family: var(--font-header);
+  font-size: 18px;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.module-desc {
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.module-features {
+  list-style: none;
+  padding: 0;
+}
+.module-features li {
+  font-family: var(--font-tech);
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  line-height: 2;
+}
+
+/* ==================== PRISM-GUARD ADVANTAGE ==================== */
+.advantage-section {
+  background: var(--navy-dark);
+  padding: 96px 0;
+  position: relative;
+}
+
+.advantage-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.03) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.03) 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.advantage-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.advantage-text h2 {
+  font-family: var(--font-header);
+  font-size: 36px;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.advantage-italic {
+  font-style: italic;
+}
+
+.advantage-desc {
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.advantage-features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 32px;
+}
+.advantage-features li {
+  font-family: var(--font-tech);
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  line-height: 2;
+}
+
+.advantage-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.advantage-image {
+  position: relative;
+  overflow: hidden;
+}
+.advantage-image img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+}
+
+
+/* ==================== SERVICES RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .scope-graphic { width: 150px; height: 150px; right: 4%; }
+}
+
+@media (max-width: 768px) {
+  .services-hero-content h1 { font-size: 32px; }
+  .scope-graphic { display: none; }
+  .modules-grid { grid-template-columns: 1fr; }
+  .advantage-grid { grid-template-columns: 1fr; }
+  .advantage-image { order: -1; }
+  .advantage-image img { height: 280px; }
+}

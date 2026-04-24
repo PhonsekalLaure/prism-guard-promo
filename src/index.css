@@ -2,9 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Oswald:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap');
 
 @import "@/styles/homepage.css";
-/* @import "@/styles/services.css";
-@import "@/styles/our-clients.css";*/
-@import "@/styles/join.css";
+@import "@/styles/services.css";
+@import "@/styles/our-clients.css";
+@import "@/styles/about.css";
+@import "@/styles/contact.css";
 
 /* ==================== DESIGN TOKENS ==================== */
 :root {
