@@ -35,6 +35,14 @@
   border-bottom: none;
 }
 
+.clients-message {
+  font-family: var(--font-tech);
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  padding: 20px 0;
+  text-align: center;
+}
+
 .client-dots {
   color: rgba(255,255,255,0.2);
   letter-spacing: 2px;
