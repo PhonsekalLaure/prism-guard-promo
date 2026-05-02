@@ -4,6 +4,10 @@
 @import "@/styles/homepage.css";
 @import "@/styles/services.css";
 @import "@/styles/our-clients.css";
+@import "@/styles/about.css";
+@import "@/styles/contact.css";
+@import "@/styles/join.css";
+@import "@/styles/booking.css";
 
 /* ==================== DESIGN TOKENS ==================== */
 :root {
