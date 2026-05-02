@@ -7,8 +7,10 @@ const navLinks = [
   { label: 'Our Clients', href: '/our-clients' },
   { label: 'About Us', href: '/about' },
   { label: 'Contact', href: '/contact' },
-  { label: 'Join the Force', href: '/join' },
+  { label: 'Join the Force', href: '/join-the-force' },
 ];
+
+const clientLoginUrl = import.meta.env.VITE_CLIENT_LOGIN_URL || 'http://localhost:5173/login';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -48,7 +50,9 @@ export default function Navbar() {
         </div>
 
         {/* Client Login */}
-        <button className="btn-login">CLIENT LOGIN</button>
+        <a className="btn-login" href={clientLoginUrl}>
+          CLIENT LOGIN
+        </a>
 
         {/* Mobile Toggle */}
         <button
@@ -73,7 +77,13 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <button className="btn-login">CLIENT LOGIN</button>
+          <a
+            className="btn-login"
+            href={clientLoginUrl}
+            onClick={() => setMobileOpen(false)}
+          >
+            CLIENT LOGIN
+          </a>
         </div>
       )}
     </nav>

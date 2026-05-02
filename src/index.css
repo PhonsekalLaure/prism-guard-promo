@@ -6,6 +6,8 @@
 @import "@/styles/our-clients.css";
 @import "@/styles/about.css";
 @import "@/styles/contact.css";
+@import "@/styles/join.css";
+@import "@/styles/booking.css";
 
 /* ==================== DESIGN TOKENS ==================== */
 :root {
@@ -126,6 +128,9 @@ h1, h2, h3, h4 {
 }
 
 .btn-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 20px;
   background: var(--gold);
   color: var(--navy-dark);
@@ -134,6 +139,7 @@ h1, h2, h3, h4 {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-decoration: none;
   border: none;
   cursor: pointer;
   transition: all 0.3s;
@@ -272,6 +278,7 @@ h1, h2, h3, h4 {
 @media (max-width: 1024px) {
   .nav-links { display: none; }
   .btn-login { display: none; }
+  .mobile-menu .btn-login { display: inline-flex; }
   .mobile-toggle { display: block; }
 }
 
