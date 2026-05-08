@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Building2 } from 'lucide-react';
+import { Building2, CheckCircle } from 'lucide-react';
 import '../../styles/booking.css';
 
 export default function BookingForm({ onCancel }) {
   const [step, setStep] = useState(1);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleNext = () => setStep(step + 1);
   const handleBack = () => setStep(step - 1);
   const handleSubmit = () => {
-    // Submit logic here
-    onCancel();
+    setShowSuccess(true);
   };
 
   return (
@@ -191,6 +191,19 @@ export default function BookingForm({ onCancel }) {
             <div className="booking-actions">
               <button className="btn-back" onClick={handleBack}>BACK</button>
               <button className="btn-proceed submit" onClick={handleSubmit}>SUBMIT</button>
+            </div>
+          </div>
+        )}
+
+        {showSuccess && (
+          <div className="success-modal-overlay" onClick={() => { setShowSuccess(false); onCancel(); }}>
+            <div className="success-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="success-modal-icon">
+                <CheckCircle size={36} />
+              </div>
+              <h3>SUBMISSION RECEIVED</h3>
+              <p>Thank you for submitting your appointment request. Our team will review the details and contact you to confirm your schedule.</p>
+              <button className="success-modal-btn" onClick={() => { setShowSuccess(false); onCancel(); }}>DONE</button>
             </div>
           </div>
         )}

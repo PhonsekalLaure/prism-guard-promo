@@ -2,20 +2,26 @@
 
 /* Main Wrapper & Container */
 .booking-wrapper {
-  background-color: var(--platinum, #ecf0f1);
-  padding: 40px 24px;
-  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 0;
+  margin-top: 60px;
+  min-height: calc(100vh - 60px);
+  width: 100%;
 }
 
 .booking-container {
-  background-color: var(--navy);
-  border-radius: 12px;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 40px 60px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  background-color: transparent;
+  border-radius: 0;
+  min-height: calc(100vh - 60px);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 32px clamp(24px, 5vw, 72px) 48px;
+  box-shadow: none;
   color: #fff;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Header */
@@ -23,40 +29,51 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 50px;
+  gap: 24px;
+  margin: 0 0 34px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(2, 18, 38, 0.12);
 }
 
 .booking-header-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
 }
 
 .booking-header-left h2 {
   font-family: var(--font-header);
-  font-size: 26px;
-  color: #fff;
+  font-size: clamp(28px, 3vw, 46px);
+  color: var(--navy-dark);
   letter-spacing: 1px;
+  line-height: 1;
 }
 
 .booking-cancel-btn {
-  background-color: var(--gold);
+  background-color: transparent;
   color: var(--navy-dark);
   font-family: var(--font-header);
   font-weight: 700;
   font-size: 16px;
-  padding: 8px 16px;
-  border: 2px solid #fff;
+  padding: 10px 18px;
+  border: 1px solid rgba(2, 18, 38, 0.25);
   border-radius: 4px;
   cursor: pointer;
   letter-spacing: 1px;
+  transition: all 0.3s;
+}
+
+.booking-cancel-btn:hover {
+  background-color: var(--gold);
+  color: var(--navy-dark);
+  border-color: var(--gold);
 }
 
 /* Progress Bar */
 .booking-progress {
   position: relative;
-  max-width: 700px;
-  margin: 0 auto 60px;
+  width: min(820px, 100%);
+  margin: 0 auto 42px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -68,14 +85,14 @@
   left: 0;
   right: 0;
   height: 4px;
-  background-color: var(--gold);
+  background-color: rgba(230, 178, 21, 0.4);
   z-index: 1;
   transform: translateY(-50%);
 }
 
 .booking-step-circle {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background-color: #fff;
   color: var(--navy-dark);
@@ -87,6 +104,8 @@
   align-items: center;
   z-index: 2;
   border: 3px solid var(--gold);
+  box-shadow: 0 0 0 6px rgba(245, 245, 245, 0.9), 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
 .booking-step-circle.active {
   background-color: var(--gold);
@@ -94,26 +113,26 @@
 
 /* Common Text Utilities */
 .booking-step-title {
-  text-align: center;
+  text-align: left;
   font-family: var(--font-header);
-  font-size: 24px;
-  color: #fff;
-  margin-bottom: 30px;
+  font-size: clamp(24px, 2.4vw, 34px);
+  color: var(--gold);
+  margin-bottom: 8px;
   letter-spacing: 1px;
 }
 
 .required-text {
-  color: #ef4444; /* red */
+  color: #f87171;
   font-family: var(--font-header);
   font-style: italic;
   font-weight: bold;
   font-size: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
   display: block;
 }
 
 .req {
-  color: #ef4444;
+  color: #f87171;
 }
 
 /* Form Grid */
@@ -134,35 +153,100 @@
 
 .form-group label {
   font-family: var(--font-header);
-  font-size: 15px;
-  color: #fff;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.72);
   margin-bottom: 8px;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .form-control {
-  background-color: #cdd5e0;
-  border: none;
-  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
   padding: 14px 16px;
   font-family: var(--font-tech);
   font-size: 14px;
-  color: var(--navy-dark);
+  color: #f0f0f0;
   width: 100%;
   outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.form-control:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(230, 178, 21, 0.2);
 }
 .form-control::placeholder {
-  color: #7b8a9c;
+  color: rgba(255, 255, 255, 0.3);
 }
 textarea.form-control {
   resize: vertical;
   min-height: 120px;
 }
 
+/* Select & date inputs on dark bg */
+.form-control.select-input,
+.form-control.date-input,
+select.form-control {
+  color: #f0f0f0;
+  color-scheme: dark;
+}
+
+/* Force readable dark text on native dropdown option menus */
+select.form-control option,
+.form-control.select-input option {
+  background-color: var(--navy-dark);
+  color: #f0f0f0;
+}
+
+.field-error {
+  color: #f87171;
+  font-family: var(--font-tech);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-top: 6px;
+}
+
+.input-with-prefix {
+  display: flex;
+  align-items: stretch;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.input-with-prefix:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(230, 178, 21, 0.2);
+}
+
+.input-with-prefix span {
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 16px;
+  color: var(--gold);
+  font-family: var(--font-tech);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.input-with-prefix .form-control {
+  border: none;
+  border-radius: 0;
+  padding-left: 8px;
+  background: transparent;
+  color: #f0f0f0;
+}
+.input-with-prefix .form-control:focus {
+  box-shadow: none;
+}
+
 /* Checkbox specific styles */
 .checkbox-group-container {
-  background-color: #cdd5e0;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 16px;
   display: flex;
@@ -176,7 +260,7 @@ textarea.form-control {
   gap: 12px;
   font-family: var(--font-tech);
   font-size: 12px;
-  color: var(--navy-dark);
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
 }
 .checkbox-indent {
@@ -186,11 +270,12 @@ textarea.form-control {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  accent-color: var(--gold);
 }
 .checkbox-addon-title {
   font-family: var(--font-tech);
   font-size: 13px;
-  color: var(--navy-dark);
+  color: rgba(255, 255, 255, 0.55);
   margin-top: 8px;
   margin-bottom: 4px;
 }
@@ -198,6 +283,16 @@ textarea.form-control {
 /* Select specific styles */
 .select-input, .date-input {
   appearance: none;
+}
+
+select.form-control,
+select.select-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23e6b215' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 12px 8px;
+  padding-right: 40px;
+  cursor: pointer;
 }
 
 /* Custom Grid columns for layout specificities */
@@ -212,10 +307,12 @@ textarea.form-control {
 
 /* Readonly overrides */
 .form-control.read-only {
-  color: #7b8a9c; /* Lighter text for placeholder look */
+  color: rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
   height: 48px; /* matching input height */
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 .textarea-readonly {
   min-height: 120px;
@@ -225,12 +322,12 @@ textarea.form-control {
 /* Buttons */
 .booking-actions {
   display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin-top: 60px;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 42px;
 }
 .booking-actions.center {
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 .btn-proceed {
@@ -239,31 +336,41 @@ textarea.form-control {
   font-family: var(--font-header);
   font-weight: 700;
   font-size: 18px;
-  padding: 10px 48px;
-  border: 4px solid #fff;
+  padding: 12px 54px;
+  border: 2px solid var(--gold);
   border-radius: 4px;
   cursor: pointer;
   letter-spacing: 1px;
+  transition: all 0.3s;
+}
+.btn-proceed:hover {
+  background-color: #f5c518;
+  box-shadow: 0 0 18px var(--gold-glow);
 }
 
 .btn-back {
-  background-color: #fff;
-  color: var(--navy-dark);
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.7);
   font-family: var(--font-header);
   font-weight: 700;
   font-size: 18px;
-  padding: 10px 48px;
-  border: 4px solid var(--gold);
+  padding: 12px 42px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   cursor: pointer;
   letter-spacing: 1px;
+  transition: all 0.3s;
+}
+.btn-back:hover {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 /* Application Form Utilities */
 .grid-6 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 24px 30px;
+  gap: 22px 28px;
 }
 .col-span-2 {
   grid-column: span 2;
@@ -276,28 +383,179 @@ textarea.form-control {
 }
 
 .divider-line {
-  height: 2px;
-  background-color: var(--gold);
-  margin: 30px 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(230, 178, 21, 0.4) 50%, transparent 100%);
+  margin: 20px 0;
   grid-column: span 6;
 }
 
 .upload-box {
-  border: 2px dashed #7b8a9c;
-  border-radius: 8px;
-  background-color: #cdd5e0;
-  height: 120px;
+  border: 2px dashed rgba(230, 178, 21, 0.35);
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.04);
+  height: 132px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #7b8a9c;
+  color: rgba(255, 255, 255, 0.35);
   font-family: var(--font-tech);
   font-size: 11px;
   text-transform: uppercase;
   text-align: center;
   cursor: pointer;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+.upload-box:hover {
+  border-color: var(--gold);
+  background-color: rgba(230, 178, 21, 0.05);
 }
 .upload-box svg {
   margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.step-content {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 44px);
+  background-color: var(--navy-dark);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+}
+
+.booking-container form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 720px) {
+  .booking-container {
+    padding: 28px 20px;
+  }
+
+  .booking-header {
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .booking-header-left h2 {
+    font-size: 22px;
+  }
+
+  .grid-6 {
+    grid-template-columns: 1fr;
+  }
+
+  .col-span-2,
+  .col-span-3,
+  .col-span-6,
+  .divider-line {
+    grid-column: span 1;
+  }
+
+  .booking-actions {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .btn-back,
+  .btn-proceed {
+    width: 100%;
+  }
+}
+
+/* ==================== SUCCESS MODAL ==================== */
+.success-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 18, 38, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: fadeInModal 0.3s ease-out;
+}
+
+.success-modal {
+  background: var(--navy-dark);
+  border: 1px solid rgba(230, 178, 21, 0.25);
+  border-radius: 12px;
+  padding: 48px 44px 40px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.45), 0 0 40px rgba(230, 178, 21, 0.08);
+  animation: scaleInModal 0.35s ease-out;
+}
+
+.success-modal-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  box-shadow: 0 0 30px var(--gold-glow);
+}
+
+.success-modal-icon svg {
+  width: 36px;
+  height: 36px;
+  color: var(--navy-dark);
+}
+
+.success-modal h3 {
+  font-family: var(--font-header);
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.success-modal p {
+  font-family: var(--font-tech);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+.success-modal-btn {
+  background-color: var(--gold);
+  color: var(--navy-dark);
+  font-family: var(--font-header);
+  font-weight: 700;
+  font-size: 16px;
+  padding: 14px 48px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+
+.success-modal-btn:hover {
+  background-color: #f5c518;
+  box-shadow: 0 0 18px var(--gold-glow);
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleInModal {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
