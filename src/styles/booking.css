@@ -33,11 +33,16 @@
   margin: 0 0 34px;
   padding-bottom: 24px;
   border-bottom: 1px solid rgba(2, 18, 38, 0.12);
+  gap: 24px;
+  margin: 0 0 34px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(2, 18, 38, 0.12);
 }
 
 .booking-header-left {
   display: flex;
   align-items: center;
+  gap: 18px;
   gap: 18px;
 }
 
@@ -45,11 +50,15 @@
   font-family: var(--font-header);
   font-size: clamp(28px, 3vw, 46px);
   color: var(--navy-dark);
+  font-size: clamp(28px, 3vw, 46px);
+  color: var(--navy-dark);
   letter-spacing: 1px;
+  line-height: 1;
   line-height: 1;
 }
 
 .booking-cancel-btn {
+  background-color: transparent;
   background-color: transparent;
   color: var(--navy-dark);
   font-family: var(--font-header);
