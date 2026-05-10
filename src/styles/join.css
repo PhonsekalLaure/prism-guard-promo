@@ -7,7 +7,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  margin-top: 60px; /* offset navbar */
+  margin-top: 72px;
   border-bottom: 6px solid var(--gold);
 }
 
