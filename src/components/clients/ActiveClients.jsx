@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getPromoClients } from '../../services/promoClients';
+import { Building2 } from 'lucide-react';
 
 function chunkClients(clients, size = 16) {
   const pages = [];
-
   for (let i = 0; i < clients.length; i += size) {
     pages.push(clients.slice(i, i + size));
   }
-
   return pages;
 }
 
@@ -21,28 +20,21 @@ export default function ActiveClients() {
 
   useEffect(() => {
     let isMounted = true;
-
     getPromoClients()
       .then((data) => {
         if (!isMounted) return;
-
         setClients(data.filter((client) => client.company));
         setStatus('success');
         setPage(0);
       })
       .catch((err) => {
         console.error('[getPromoClients Error]:', err);
-        if (isMounted) {
-          setStatus('error');
-        }
+        if (isMounted) setStatus('error');
       });
-
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, []);
 
-  const leftCol = currentClients.slice(0, 8);
+  const leftCol  = currentClients.slice(0, 8);
   const rightCol = currentClients.slice(8, 16);
   const hasClients = clients.length > 0;
 
@@ -52,43 +44,48 @@ export default function ActiveClients() {
         <div className="section-title">
           <h2>ACTIVE CLIENTS</h2>
           <div className="section-title-underline" />
+          <p className="section-subtitle" style={{ color: 'rgba(9,50,105,0.55)' }}>
+            Companies currently under Prism-Guard protection.
+          </p>
         </div>
 
         <div className="clients-panel">
+          {/* Panel header bar */}
+          <div className="clients-panel-header">
+            <span className="panel-header-label">// CLIENT ROSTER</span>
+            {hasClients && (
+              <span className="panel-header-count">{clients.length} PROTECTED ENTITIES</span>
+            )}
+          </div>
+
           {status === 'loading' && (
-            <div className="clients-message">Loading active clients...</div>
+            <div className="clients-message">
+              <span className="clients-message-dot" />
+              Loading active clients…
+            </div>
           )}
-
           {status === 'error' && (
-            <div className="clients-message">Unable to load clients from the database.</div>
+            <div className="clients-message clients-message--error">
+              Unable to load clients from the database.
+            </div>
           )}
-
           {status === 'success' && !hasClients && (
             <div className="clients-message">No active clients found.</div>
           )}
 
           {hasClients && (
             <div className="clients-grid">
-              <div className="clients-col">
-                {leftCol.map((client) => (
-                  <div key={client.id} className="client-entry">
-                    // {client.company}
-                    <span className="client-dots">
-                      {'.'.repeat(30 - client.company.length > 0 ? 30 - client.company.length : 5)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="clients-col">
-                {rightCol.map((client) => (
-                  <div key={client.id} className="client-entry">
-                    // {client.company}
-                    <span className="client-dots">
-                      {'.'.repeat(30 - client.company.length > 0 ? 30 - client.company.length : 5)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              {[leftCol, rightCol].map((col, colIdx) => (
+                <div key={colIdx} className="clients-col">
+                  {col.map((client, i) => (
+                    <div key={client.id} className="client-entry">
+                      <span className="client-index">{String(page * 16 + colIdx * 8 + i + 1).padStart(2, '0')}</span>
+                      <Building2 size={13} className="client-icon" strokeWidth={1.5} />
+                      <span className="client-name">{client.company}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
           )}
 
@@ -99,7 +96,7 @@ export default function ActiveClients() {
                 onClick={() => setPage((p) => (p > 0 ? p - 1 : totalPages - 1))}
                 aria-label="Previous page"
               >
-                &lt;
+                ‹
               </button>
               <div className="pagination-dots">
                 {clientPages.map((_, i) => (
@@ -115,7 +112,7 @@ export default function ActiveClients() {
                 onClick={() => setPage((p) => (p < totalPages - 1 ? p + 1 : 0))}
                 aria-label="Next page"
               >
-                &gt;
+                ›
               </button>
             </div>
           )}
