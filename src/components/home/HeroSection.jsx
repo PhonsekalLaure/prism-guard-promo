@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const slides = [
   'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=2070&auto=format&fit=crop',
@@ -11,7 +12,7 @@ export default function HeroSection() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(interval);
   }, []);
 
@@ -49,9 +50,21 @@ export default function HeroSection() {
             // SECURING ASSETS 24/7
           </p>
           <div className="hero-buttons">
-            <a href="#access" className="btn-primary">HIRE SECURITY</a>
-            <a href="#access" className="btn-outline-white">APPLY NOW</a>
+            <Link to="/join-the-force?form=booking" className="btn-primary">HIRE SECURITY</Link>
+            <Link to="/join-the-force?form=application" className="btn-outline-white">APPLY NOW</Link>
           </div>
+        </div>
+
+        {/* Carousel indicators */}
+        <div className="hero-indicators">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              className={`hero-indicator ${i === current ? 'active' : ''}`}
+              onClick={() => setCurrent(i)}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
         </div>
       </div>
     </section>
