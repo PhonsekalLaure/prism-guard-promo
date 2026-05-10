@@ -259,6 +259,39 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 15px var(--gold-glow);
 }
 
+/* ==================== HERO INDICATORS ==================== */
+.hero-indicators {
+  display: flex;
+  gap: 10px;
+  margin-top: 48px;
+}
+
+.hero-indicator {
+  width: 32px;
+  height: 3px;
+  background: rgba(255,255,255,0.25);
+  border: none;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  padding: 0;
+}
+.hero-indicator.active {
+  width: 48px;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+.hero-indicator:hover {
+  background: rgba(255,255,255,0.5);
+}
+
+/* ==================== SECTION DIVIDER ==================== */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(230,178,21,0.3), transparent);
+  margin: 0;
+  border: none;
+}
+
 /* ==================== ANIMATIONS ==================== */
 @keyframes scan {
   0% { top: 0%; }
@@ -271,6 +304,17 @@ h1, h2, h3, h4 {
 @keyframes pulse-glow {
   0%, 100% { text-shadow: 0 0 5px #fff; }
   50% { text-shadow: 0 0 15px #fff, 0 0 30px rgba(255,255,255,0.3); }
+}
+
+/* Scroll reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ==================== RESPONSIVE ==================== */
