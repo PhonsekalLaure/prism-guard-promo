@@ -1,81 +1,136 @@
 import { MapPin, Phone, Mail } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+
+const infoCards = [
+  {
+    Icon: MapPin,
+    label: 'LOCATION',
+    text: 'Blk2-Lot6 Marbellas St., El Puentebello Subdivision, Fourth Estate, Brgy. San Antonio, Parañaque City, Metro Manila, 1715',
+  },
+  {
+    Icon: Phone,
+    label: 'TELEPHONE / MOBILE',
+    text: '(02) 8299-344  ·  0920-710-5076',
+  },
+  {
+    Icon: Mail,
+    label: 'EMAIL',
+    text: 'praise02771@gmail.com',
+  },
+];
 
 export default function ContactSection() {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
+      { threshold: 0.1 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="contact-section">
+    <section className="contact-section" ref={ref}>
+      {/* Ambient orbs */}
+      <div className="contact-orb contact-orb--tl" />
+      <div className="contact-orb contact-orb--br" />
+
       <div className="container">
-        <div className="section-title">
+        <div
+          className="section-title"
+          style={{
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(24px)',
+            transition: 'all 0.7s ease',
+          }}
+        >
           <h2>AGENCY CONTACT</h2>
           <div className="section-title-underline" />
+          <p className="section-subtitle contact-subtitle">
+            Reach out to us for deployments, inquiries, or security consultations.
+          </p>
         </div>
 
         <div className="contact-grid">
-          {/* Form */}
-          <div className="contact-form-card">
-            <h3>SEND US A MESSAGE!</h3>
+          {/* === FORM === */}
+          <div
+            className="contact-form-card"
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'translateX(0)' : 'translateX(-28px)',
+              transition: 'all 0.7s ease 0.15s',
+            }}
+          >
+            <div className="form-card-header">
+              <span className="form-card-tag">// SEND MESSAGE</span>
+              <h3>Get In Touch</h3>
+            </div>
+
             <form onSubmit={(e) => e.preventDefault()}>
-              <div className="form-group">
-                <label>NAME</label>
-                <input type="text" placeholder="ENTER NAME" />
-              </div>
-              <div className="form-group">
-                <label>EMAIL ADDRESS</label>
-                <input type="email" placeholder="ENTER EMAIL" />
+              <div className="form-row">
+                <div className="form-group">
+                  <label>NAME</label>
+                  <input type="text" placeholder="Enter your name" />
+                </div>
+                <div className="form-group">
+                  <label>EMAIL ADDRESS</label>
+                  <input type="email" placeholder="Enter your email" />
+                </div>
               </div>
               <div className="form-group">
                 <label>SUBJECT</label>
-                <input type="text" placeholder="ENTER SUBJECT" />
+                <input type="text" placeholder="What is this about?" />
               </div>
               <div className="form-group">
                 <label>MESSAGE</label>
-                <textarea placeholder="ENTER TEXT HERE"></textarea>
+                <textarea placeholder="Describe your security needs or inquiry…" />
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <button type="submit" className="btn-send">SEND</button>
-              </div>
+              <button type="submit" className="btn-send">
+                SEND MESSAGE →
+              </button>
             </form>
           </div>
 
-          {/* Info */}
-          <div className="contact-info-col">
-            <div className="info-card">
-              <div className="info-icon">
-                <MapPin />
-              </div>
-              <div className="info-content">
-                <div className="info-label">LOCATION</div>
-                <div className="info-text">
-                  Blk2-Lot6 Marbellas St., El Puentebello Subdivision, Fourth Estate, Barangay San Antonio, Parañaque City, Metro Manila, 1715
+          {/* === INFO COLUMN === */}
+          <div
+            className="contact-info-col"
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'translateX(0)' : 'translateX(28px)',
+              transition: 'all 0.7s ease 0.25s',
+            }}
+          >
+            {/* Info cards */}
+            {infoCards.map(({ Icon, label, text }, i) => (
+              <div key={label} className="info-card">
+                <div className="info-icon">
+                  <Icon size={22} strokeWidth={1.5} />
+                </div>
+                <div className="info-content">
+                  <div className="info-label">{label}</div>
+                  <div className="info-text">{text}</div>
                 </div>
               </div>
-            </div>
+            ))}
 
+            {/* Google Map embed */}
             <div className="map-card">
-              <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=800&auto=format&fit=crop" alt="Map View" />
-            </div>
-
-            <div className="info-card">
-              <div className="info-icon">
-                <Phone />
+              <div className="map-header">
+                <span className="map-tag">// HEADQUARTERS</span>
               </div>
-              <div className="info-content">
-                <div className="info-label">TELEPHONE / MOBILE NUMBER</div>
-                <div className="info-text">
-                  (02) 8299-344 / 0920-710-5076
-                </div>
-              </div>
-            </div>
-
-            <div className="info-card">
-              <div className="info-icon">
-                <Mail />
-              </div>
-              <div className="info-content">
-                <div className="info-label">EMAIL</div>
-                <div className="info-text">
-                  praise02771@gmail.com
-                </div>
-              </div>
+              <iframe
+                title="Praise Security Location"
+                src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d7726.637204994879!2d121.02547068789391!3d14.466385782729981!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sBlk2-Lot6%20Marbellas%20St.%2C%20El%20Puentebello%20Subdivision%2C%20Fourth%20Estate%2C%20Brgy.%20San%20Antonio%2C%20Paranaque%20City%2C%20Metro%20Manila%2C%201715!5e0!3m2!1sen!2sph!4v1778427300040!5m2!1sen!2sph"
+                width="100%"
+                height="100%"
+                style={{ border: 0, display: 'block' }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
         </div>
