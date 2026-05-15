@@ -357,6 +357,17 @@ select.select-input {
   box-shadow: 0 0 18px var(--gold-glow);
 }
 
+.btn-proceed:disabled,
+.btn-back:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  box-shadow: none;
+}
+
+.btn-proceed:disabled:hover {
+  background-color: var(--gold);
+}
+
 .btn-back {
   background-color: transparent;
   color: rgba(255, 255, 255, 0.7);
@@ -373,6 +384,18 @@ select.select-input {
 .btn-back:hover {
   border-color: var(--gold);
   color: var(--gold);
+}
+
+.booking-submit-error {
+  margin-top: 24px;
+  padding: 12px 14px;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 6px;
+  background: rgba(248, 113, 113, 0.08);
+  color: #fca5a5;
+  font-family: var(--font-tech);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 /* Application Form Utilities */
@@ -460,6 +483,16 @@ select.select-input {
 
   .grid-6 {
     grid-template-columns: 1fr;
+  }
+
+  .booking-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-form-grid .form-group,
+  .booking-form-grid .form-col-right,
+  .booking-form-grid .form-col-right-spanned {
+    grid-column: auto !important;
   }
 
   .col-span-2,

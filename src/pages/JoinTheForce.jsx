@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import JoinHero from '@components/join/JoinHero';
 import ApplicationProcess from '@components/join/ApplicationProcess';
@@ -6,21 +6,17 @@ import BookingForm from '@components/join/BookingForm';
 import ApplicationForm from '@components/join/ApplicationForm';
 
 export default function JoinTheForce() {
-  const [isBooking, setIsBooking] = useState(false);
-  const [isApplying, setIsApplying] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const form = searchParams.get('form');
+  const isBooking = form === 'booking';
+  const isApplying = form === 'application';
 
-  // Auto-open the correct form when arriving with ?form=booking or ?form=application
-  useEffect(() => {
-    const form = searchParams.get('form');
-    if (form === 'booking') setIsBooking(true);
-    else if (form === 'application') setIsApplying(true);
-  }, [searchParams]);
+  const openForm = (targetForm) => {
+    navigate(`/join-the-force?form=${targetForm}`);
+  };
 
   const handleCancel = () => {
-    setIsBooking(false);
-    setIsApplying(false);
     navigate('/join-the-force', { replace: true });
   };
 
@@ -34,8 +30,8 @@ export default function JoinTheForce() {
         <>
           <JoinHero />
           <ApplicationProcess
-            onBookNow={() => setIsBooking(true)}
-            onApplyNow={() => setIsApplying(true)}
+            onBookNow={() => openForm('booking')}
+            onApplyNow={() => openForm('application')}
           />
         </>
       )}

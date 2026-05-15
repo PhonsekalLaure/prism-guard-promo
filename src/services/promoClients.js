@@ -9,3 +9,8 @@ export async function getPromoClients() {
     ? data.data
     : (Array.isArray(data?.clients) ? data.clients : []);
 }
+
+export async function submitAppointmentRequest(payload) {
+  const { data } = await axios.post(`${API_BASE_URL}/api/promo/appointments`, payload);
+  return data;
+}
