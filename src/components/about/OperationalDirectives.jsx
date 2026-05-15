@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { createElement, useEffect, useRef, useState } from 'react';
 import { Target, Eye } from 'lucide-react';
 
 const directives = [
@@ -47,7 +47,7 @@ export default function OperationalDirectives() {
         </div>
 
         <div className="directives-grid">
-          {directives.map(({ tag, icon: Icon, title, desc }, i) => (
+          {directives.map(({ tag, icon, title, desc }, i) => (
             <div
               key={tag}
               className="directive-card"
@@ -58,7 +58,7 @@ export default function OperationalDirectives() {
               }}
             >
               <div className="directive-icon-wrap">
-                <Icon size={26} strokeWidth={1.5} />
+                {createElement(icon, { size: 26, strokeWidth: 1.5 })}
               </div>
               <div className="directive-tag">{tag}</div>
               <h3>{title}</h3>

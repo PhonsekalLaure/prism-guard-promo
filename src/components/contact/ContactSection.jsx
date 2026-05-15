@@ -1,5 +1,5 @@
 import { MapPin, Phone, Mail } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { createElement, useEffect, useRef, useState } from 'react';
 
 const infoCards = [
   {
@@ -104,10 +104,10 @@ export default function ContactSection() {
             }}
           >
             {/* Info cards */}
-            {infoCards.map(({ Icon, label, text }, i) => (
+            {infoCards.map(({ Icon, label, text }) => (
               <div key={label} className="info-card">
                 <div className="info-icon">
-                  <Icon size={22} strokeWidth={1.5} />
+                  {createElement(Icon, { size: 22, strokeWidth: 1.5 })}
                 </div>
                 <div className="info-content">
                   <div className="info-label">{label}</div>

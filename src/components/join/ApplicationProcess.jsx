@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { createElement, useEffect, useRef, useState } from 'react';
 import { Building2, ShieldHalf } from 'lucide-react';
 
 const portals = [
@@ -68,7 +68,7 @@ export default function ApplicationProcess({ onBookNow, onApplyNow }) {
         </div>
 
         <div className="portal-grid">
-          {portals.map(({ tag, icon: Icon, title, desc, steps, btnLabel, btnAction }, i) => (
+          {portals.map(({ tag, icon, title, desc, steps, btnLabel, btnAction }, i) => (
             <div
               key={tag}
               className="portal-card"
@@ -84,7 +84,7 @@ export default function ApplicationProcess({ onBookNow, onApplyNow }) {
               {/* Header: icon + tag */}
               <div className="portal-card-top">
                 <div className="portal-icon-wrap">
-                  <Icon size={28} strokeWidth={1.5} />
+                  {createElement(icon, { size: 28, strokeWidth: 1.5 })}
                 </div>
                 <span className="portal-tag">{tag}</span>
               </div>
