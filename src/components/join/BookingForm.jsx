@@ -84,6 +84,10 @@ export default function BookingForm({ onCancel }) {
     setSubmitError('');
   };
 
+  const updatePhoneField = (field, value) => {
+    updateField(field, value.replace(/\D/g, '').slice(0, 10));
+  };
+
   const togglePurpose = (value) => {
     setFormData((current) => {
       const isSelected = current.purposes.includes(value);
@@ -109,7 +113,11 @@ export default function BookingForm({ onCancel }) {
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
         nextErrors.email = 'Enter a valid email address.';
       }
-      if (!formData.mobile.trim()) nextErrors.mobile = 'Mobile number is required.';
+      if (!formData.mobile.trim()) {
+        nextErrors.mobile = 'Mobile number is required.';
+      } else if (!/^9\d{9}$/.test(formData.mobile.trim())) {
+        nextErrors.mobile = 'Enter a valid 10-digit Philippine mobile number starting with 9.';
+      }
     }
 
     if (targetStep === 2) {
@@ -146,6 +154,7 @@ export default function BookingForm({ onCancel }) {
       await submitAppointmentRequest({
         ...formData,
         email: formData.email.trim(),
+        mobile: `+63${formData.mobile}`,
       });
       setShowSuccess(true);
     } catch (error) {
@@ -234,13 +243,17 @@ export default function BookingForm({ onCancel }) {
 
               <div className="form-group">
                 <label>MOBILE NUMBER <span className="req">*</span></label>
-                <input
-                  type="tel"
-                  className="form-control"
-                  placeholder="+63 XXX XXX XXXX"
-                  value={formData.mobile}
-                  onChange={(event) => updateField('mobile', event.target.value)}
-                />
+                <div className="input-with-prefix">
+                  <span>+63</span>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    className="form-control"
+                    placeholder="9123456789"
+                    value={formData.mobile}
+                    onChange={(event) => updatePhoneField('mobile', event.target.value)}
+                  />
+                </div>
                 {errors.mobile && <span className="field-error">{errors.mobile}</span>}
               </div>
               <div className="form-group">
@@ -380,7 +393,7 @@ export default function BookingForm({ onCancel }) {
               <div className="form-col-right-spanned">
                 <div className="form-group mb-24">
                   <label>MOBILE NUMBER</label>
-                  <div className="form-control read-only">{formData.mobile}</div>
+                  <div className="form-control read-only">{formData.mobile ? `+63 ${formData.mobile}` : ''}</div>
                 </div>
                 <div className="form-group">
                   <label>LANDLINE NUMBER (OPTIONAL)</label>
