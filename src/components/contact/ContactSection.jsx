@@ -1,16 +1,28 @@
-import { MapPin, Phone, Mail } from 'lucide-react';
-import { createElement, useEffect, useRef, useState } from 'react';
+import { CheckCircle, Mail, MapPin, Phone } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { submitContactMessage } from '@/services/promoClients';
+
+const INITIAL_FORM = {
+  name: '',
+  email: '',
+  subject: '',
+  message: '',
+};
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NAME_REGEX = /^[A-Za-z\u00D1\u00F1 .'-]+$/;
+const BLOCKED_CONTENT_REGEX = /\b(?:https?:\/\/|www\.|[a-z0-9-]+\.(?:com|net|org|io|ph|xyz|info|biz|ru|cn)\b|script|iframe|object|embed|onerror|onload|javascript:|data:text\/html|base64|eval\(|document\.|window\.|<\?php)|<[^>]+>/i;
 
 const infoCards = [
   {
     Icon: MapPin,
     label: 'LOCATION',
-    text: 'Blk2-Lot6 Marbellas St., El Puentebello Subdivision, Fourth Estate, Brgy. San Antonio, Parañaque City, Metro Manila, 1715',
+    text: 'Blk2-Lot6 Marbellas St., El Puentebello Subdivision, Fourth Estate, Brgy. San Antonio, Paranaque City, Metro Manila, 1715',
   },
   {
     Icon: Phone,
     label: 'TELEPHONE / MOBILE',
-    text: '(02) 8299-344  ·  0920-710-5076',
+    text: '(02) 8299-344 / 0920-710-5076',
   },
   {
     Icon: Mail,
@@ -22,22 +34,104 @@ const infoCards = [
 export default function ContactSection() {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
+  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [errors, setErrors] = useState({});
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
-      { threshold: 0.1 }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
     );
+
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!showSuccessModal) return undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      setShowSuccessModal(false);
+    }, 10000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [showSuccessModal]);
+
+  const updateField = (field, value) => {
+    setFormData((current) => ({ ...current, [field]: value }));
+    setErrors((current) => ({ ...current, [field]: '' }));
+    setSubmitError('');
+  };
+
+  const validateForm = () => {
+    const nextErrors = {};
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const subject = formData.subject.trim();
+    const message = formData.message.trim();
+
+    if (!name) nextErrors.name = 'Name is required.';
+    else if (!NAME_REGEX.test(name)) nextErrors.name = 'Use letters, spaces, apostrophes, periods, and hyphens only.';
+
+    if (!email) nextErrors.email = 'Email address is required.';
+    else if (!EMAIL_REGEX.test(email)) nextErrors.email = 'Enter a valid email address.';
+
+    if (!subject) nextErrors.subject = 'Subject is required.';
+    else if (subject.length < 3) nextErrors.subject = 'Subject must be at least 3 characters.';
+    else if (BLOCKED_CONTENT_REGEX.test(subject)) nextErrors.subject = 'Links, HTML, or code are not allowed.';
+
+    if (!message) nextErrors.message = 'Message is required.';
+    else if (message.length < 10) nextErrors.message = 'Message must be at least 10 characters.';
+    else if (BLOCKED_CONTENT_REGEX.test(message)) nextErrors.message = 'Links, HTML, or code are not allowed.';
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const getErrorMessage = (error) => {
+    if (error?.response?.status === 429) {
+      const retryAfter = error.response.data?.retryAfterSeconds;
+      return retryAfter
+        ? `Too many contact messages. Please try again in ${retryAfter} seconds.`
+        : 'Too many contact messages. Please try again later.';
+    }
+
+    return error?.response?.data?.error || 'Unable to send your message. Please try again.';
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      await submitContactMessage({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+      });
+      setFormData(INITIAL_FORM);
+      setShowSuccessModal(true);
+    } catch (error) {
+      setSubmitError(getErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section className="contact-section" ref={ref}>
-      {/* Ambient orbs */}
-      <div className="contact-orb contact-orb--tl" />
-      <div className="contact-orb contact-orb--br" />
-
       <div className="container">
         <div
           className="section-title"
@@ -55,7 +149,6 @@ export default function ContactSection() {
         </div>
 
         <div className="contact-grid">
-          {/* === FORM === */}
           <div
             className="contact-form-card"
             style={{
@@ -69,32 +162,71 @@ export default function ContactSection() {
               <h3>Get In Touch</h3>
             </div>
 
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubmit} noValidate>
               <div className="form-row">
                 <div className="form-group">
-                  <label>NAME</label>
-                  <input type="text" placeholder="Enter your name" />
+                  <label htmlFor="contact-name">NAME</label>
+                  <input
+                    id="contact-name"
+                    type="text"
+                    placeholder="Enter your name"
+                    value={formData.name}
+                    onChange={(event) => updateField('name', event.target.value)}
+                    maxLength={120}
+                    aria-invalid={Boolean(errors.name)}
+                    aria-describedby={errors.name ? 'contact-name-error' : undefined}
+                  />
+                  {errors.name && <span id="contact-name-error" className="field-error contact-field-error">{errors.name}</span>}
                 </div>
                 <div className="form-group">
-                  <label>EMAIL ADDRESS</label>
-                  <input type="email" placeholder="Enter your email" />
+                  <label htmlFor="contact-email">EMAIL ADDRESS</label>
+                  <input
+                    id="contact-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={(event) => updateField('email', event.target.value)}
+                    maxLength={160}
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={errors.email ? 'contact-email-error' : undefined}
+                  />
+                  {errors.email && <span id="contact-email-error" className="field-error contact-field-error">{errors.email}</span>}
                 </div>
               </div>
               <div className="form-group">
-                <label>SUBJECT</label>
-                <input type="text" placeholder="What is this about?" />
+                <label htmlFor="contact-subject">SUBJECT</label>
+                <input
+                  id="contact-subject"
+                  type="text"
+                  placeholder="What is this about?"
+                  value={formData.subject}
+                  onChange={(event) => updateField('subject', event.target.value)}
+                  maxLength={160}
+                  aria-invalid={Boolean(errors.subject)}
+                  aria-describedby={errors.subject ? 'contact-subject-error' : undefined}
+                />
+                {errors.subject && <span id="contact-subject-error" className="field-error contact-field-error">{errors.subject}</span>}
               </div>
               <div className="form-group">
-                <label>MESSAGE</label>
-                <textarea placeholder="Describe your security needs or inquiry…" />
+                <label htmlFor="contact-message">MESSAGE</label>
+                <textarea
+                  id="contact-message"
+                  placeholder="Describe your security needs or inquiry..."
+                  value={formData.message}
+                  onChange={(event) => updateField('message', event.target.value)}
+                  maxLength={1500}
+                  aria-invalid={Boolean(errors.message)}
+                  aria-describedby={errors.message ? 'contact-message-error' : undefined}
+                />
+                {errors.message && <span id="contact-message-error" className="field-error contact-field-error">{errors.message}</span>}
               </div>
-              <button type="submit" className="btn-send">
-                SEND MESSAGE →
+              {submitError && <div className="contact-submit-error">{submitError}</div>}
+              <button type="submit" className="btn-send" disabled={isSubmitting}>
+                {isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}
               </button>
             </form>
           </div>
 
-          {/* === INFO COLUMN === */}
           <div
             className="contact-info-col"
             style={{
@@ -103,20 +235,22 @@ export default function ContactSection() {
               transition: 'all 0.7s ease 0.25s',
             }}
           >
-            {/* Info cards */}
-            {infoCards.map(({ Icon, label, text }) => (
-              <div key={label} className="info-card">
-                <div className="info-icon">
-                  {createElement(Icon, { size: 22, strokeWidth: 1.5 })}
-                </div>
-                <div className="info-content">
-                  <div className="info-label">{label}</div>
-                  <div className="info-text">{text}</div>
-                </div>
-              </div>
-            ))}
+            {infoCards.map((card) => {
+              const InfoIcon = card.Icon;
 
-            {/* Google Map embed */}
+              return (
+                <div key={card.label} className="info-card">
+                  <div className="info-icon">
+                    <InfoIcon size={22} strokeWidth={1.5} aria-hidden="true" />
+                  </div>
+                  <div className="info-content">
+                    <div className="info-label">{card.label}</div>
+                    <div className="info-text">{card.text}</div>
+                  </div>
+                </div>
+              );
+            })}
+
             <div className="map-card">
               <div className="map-header">
                 <span className="map-tag">// HEADQUARTERS</span>
@@ -135,6 +269,21 @@ export default function ContactSection() {
           </div>
         </div>
       </div>
+
+      {showSuccessModal && (
+        <div className="success-modal-overlay" onClick={() => setShowSuccessModal(false)}>
+          <div className="success-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="success-modal-icon">
+              <CheckCircle size={36} />
+            </div>
+            <h3>MESSAGE SENT</h3>
+            <p>Message sent. Our team will get back to you soon.</p>
+            <button className="success-modal-btn" type="button" onClick={() => setShowSuccessModal(false)}>
+              DONE
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

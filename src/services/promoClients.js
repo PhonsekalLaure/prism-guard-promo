@@ -20,3 +20,8 @@ export async function submitApplicationRequest(payload) {
   const { data } = await axios.post(`${API_BASE}/api/promo/applications`, payload);
   return data;
 }
+
+export async function submitContactMessage(payload) {
+  const { data } = await axios.post(`${API_BASE}/api/promo/contact`, payload);
+  return data;
+}
