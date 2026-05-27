@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import JoinHero from '@components/join/JoinHero';
 import ApplicationProcess from '@components/join/ApplicationProcess';

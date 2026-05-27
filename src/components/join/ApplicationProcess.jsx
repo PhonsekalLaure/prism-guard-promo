@@ -47,10 +47,6 @@ export default function ApplicationProcess({ onBookNow, onApplyNow }) {
 
   return (
     <section className="portal-section" ref={ref}>
-      {/* Ambient orbs */}
-      <div className="portal-orb portal-orb--left" />
-      <div className="portal-orb portal-orb--right" />
-
       <div className="container">
         <div
           className="section-title"
@@ -108,7 +104,7 @@ export default function ApplicationProcess({ onBookNow, onApplyNow }) {
                 className="portal-btn"
                 onClick={handlers[btnAction]}
               >
-                {btnLabel} →
+                {btnLabel}
               </button>
             </div>
           ))}

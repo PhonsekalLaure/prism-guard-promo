@@ -1,7 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Building2, CheckCircle } from 'lucide-react';
 import { submitAppointmentRequest } from '../../services/promoClients';
-import '../../styles/booking.css';
 
 const PURPOSE_OPTIONS = [
   {
@@ -204,8 +203,6 @@ export default function BookingForm({ onCancel }) {
                 />
                 {errors.companyName && <span className="field-error">{errors.companyName}</span>}
               </div>
-              <div className="form-group hidden-desktop"></div>
-
               <div className="form-group">
                 <label>REPRESENTATIVE FIRST NAME <span className="req">*</span></label>
                 <input

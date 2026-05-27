@@ -2,9 +2,16 @@ import { useState } from 'react';
 import { ShieldHalf, CheckCircle } from 'lucide-react';
 import GoogleAddressAutofill from '@components/join/GoogleAddressAutofill';
 import { submitApplicationRequest } from '@/services/promoClients';
-import '@/styles/booking.css';
 
-const today = new Date().toISOString().split('T')[0];
+function getTodayIsoDate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+const today = getTodayIsoDate();
 
 const initialForm = {
   firstName: '',
@@ -57,7 +64,7 @@ const labels = {
   emergencyContactRelationship: 'Emergency contact relationship',
 };
 
-const namePattern = /^[A-Za-zÑñ .'-]+$/;
+const namePattern = /^[A-Za-z\u00d1\u00f1 .'-]+$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const licensePattern = /^[A-Za-z0-9 -]+$/;
 
@@ -104,7 +111,7 @@ export default function ApplicationForm({ onCancel }) {
 
   const handleTextChange = (field, value, type = 'text') => {
     let nextValue = value;
-    if (type === 'name') nextValue = value.replace(/[^A-Za-zÑñ .'-]/g, '');
+    if (type === 'name') nextValue = value.replace(/[^A-Za-z\u00d1\u00f1 .'-]/g, '');
     if (type === 'decimal' || type === 'number') nextValue = value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
     if (type === 'phone') nextValue = value.replace(/\D/g, '').slice(0, 10);
     if (type === 'license') nextValue = value.replace(/[^A-Za-z0-9 -]/g, '').toUpperCase();

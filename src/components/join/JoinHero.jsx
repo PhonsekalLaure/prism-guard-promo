@@ -37,7 +37,7 @@ export default function JoinHero() {
       <div className="services-hero-content">
         <div className="status-badge">
           <span className="mono">RECRUITMENT STATUS:</span>{' '}
-          <span className="online">● OPEN</span>
+          <span className="online">&bull; OPEN</span>
         </div>
         <h1>
           BE PART OF<br />
