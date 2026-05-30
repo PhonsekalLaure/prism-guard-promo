@@ -1,0 +1,250 @@
+/* ==================== LOADING SCREEN ==================== */
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--navy-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.loading-screen--exit {
+  opacity: 0;
+  transform: scale(1.04);
+  pointer-events: none;
+}
+
+/* ---- Animated grid background ---- */
+.ls-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(9, 50, 105, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(9, 50, 105, 0.5) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: ls-grid-drift 20s linear infinite;
+}
+
+@keyframes ls-grid-drift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 48px 48px; }
+}
+
+/* ---- Scanline ---- */
+.ls-scanline {
+  position: absolute;
+  inset-inline: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(230, 178, 21, 0.08) 20%,
+    rgba(230, 178, 21, 0.55) 50%,
+    rgba(230, 178, 21, 0.08) 80%,
+    transparent 100%
+  );
+  animation: ls-scan 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  box-shadow: 0 0 18px 4px rgba(230, 178, 21, 0.2);
+}
+
+@keyframes ls-scan {
+  0%   { top: -2px;   opacity: 0; }
+  5%   { opacity: 1;  }
+  95%  { opacity: 1;  }
+  100% { top: 100vh; opacity: 0; }
+}
+
+/* ---- Corner brackets ---- */
+.ls-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: 0.6;
+  animation: ls-corner-pulse 2.5s ease-in-out infinite alternate;
+}
+
+.ls-corner--tl { top: 24px; left: 24px;  border-width: 2px 0 0 2px; }
+.ls-corner--tr { top: 24px; right: 24px; border-width: 2px 2px 0 0; }
+.ls-corner--bl { bottom: 24px; left: 24px;  border-width: 0 0 2px 2px; }
+.ls-corner--br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
+
+@keyframes ls-corner-pulse {
+  from { opacity: 0.3; }
+  to   { opacity: 0.8; }
+}
+
+/* ---- Center content ---- */
+.ls-center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: min(460px, 90vw);
+}
+
+/* ---- Shield ---- */
+.ls-shield {
+  width: 96px;
+  height: 96px;
+  filter: drop-shadow(0 0 18px rgba(230, 178, 21, 0.45));
+  animation: ls-shield-float 3.6s ease-in-out infinite;
+}
+
+@keyframes ls-shield-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.ls-shield-outer {
+  animation: ls-shield-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes ls-shield-glow {
+  from { filter: drop-shadow(0 0 4px rgba(230,178,21,0.3)); }
+  to   { filter: drop-shadow(0 0 14px rgba(230,178,21,0.9)); }
+}
+
+/* Draw-on effect for the checkmark */
+.ls-check {
+  stroke-dasharray: 36;
+  stroke-dashoffset: 36;
+  animation: ls-draw 0.6s 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes ls-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ---- Logo wordmark ---- */
+.ls-logo {
+  font-family: var(--font-header);
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #fff;
+  text-transform: uppercase;
+  animation: ls-fade-in 0.5s 0.3s ease both;
+}
+
+@keyframes ls-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Terminal lines ---- */
+.ls-terminal {
+  width: 100%;
+  background: rgba(2, 18, 38, 0.7);
+  border: 1px solid rgba(230, 178, 21, 0.18);
+  border-radius: 4px;
+  padding: 12px 16px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: ls-fade-in 0.5s 0.5s ease both;
+}
+
+.ls-terminal-line {
+  font-family: var(--font-tech);
+  font-size: 11px;
+  color: rgba(236, 240, 241, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s;
+}
+
+.ls-terminal-line--active {
+  color: var(--gold);
+}
+
+.ls-prompt {
+  color: var(--gold);
+  opacity: 0.7;
+}
+
+/* Blinking cursor on the active line */
+.ls-terminal-line--active::after {
+  content: '▋';
+  color: var(--gold);
+  animation: ls-blink 0.8s step-end infinite;
+  margin-left: 2px;
+}
+
+@keyframes ls-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ---- Progress bar ---- */
+.ls-progress-wrap {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  animation: ls-fade-in 0.5s 0.6s ease both;
+}
+
+.ls-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--navy) 0%, var(--gold) 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--gold-glow);
+  transition: width 0.05s linear;
+  position: relative;
+}
+
+/* Shimmer on the bar */
+.ls-progress-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.35) 50%,
+    transparent 100%
+  );
+  animation: ls-shimmer 1.2s linear infinite;
+}
+
+@keyframes ls-shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+/* ---- Progress label ---- */
+.ls-progress-label {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: ls-fade-in 0.5s 0.7s ease both;
+}
+
+.ls-pct {
+  font-family: var(--font-tech);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gold);
+  min-width: 38px;
+}
+
+.ls-status {
+  font-family: var(--font-tech);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(236, 240, 241, 0.35);
+  text-transform: uppercase;
+}
