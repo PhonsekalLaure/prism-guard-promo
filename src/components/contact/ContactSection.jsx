@@ -27,7 +27,7 @@ const infoCards = [
   {
     Icon: Mail,
     label: 'EMAIL',
-    text: 'praise02771@gmail.com',
+    text: 'praisesecurity@gmail.com',
   },
 ];
 

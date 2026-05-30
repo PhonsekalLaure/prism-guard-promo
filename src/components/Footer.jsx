@@ -8,9 +8,9 @@ const quickLinks = [
 ];
 
 const contactInfo = [
-  { label: '(02) 8123-4567', href: 'tel:0281234567' },
-  { label: 'inquiry@psiai.ph', href: 'mailto:inquiry@psiai.ph' },
-  { label: 'Paranaque, Philippines', href: '#' },
+  { label: '(02) 8299-344 / 0920-710-5076', href: '/contact' },
+  { label: 'praisesecurity@gmail.com', href: '/contact' },
+  { label: 'Paranaque, Philippines', href: '/contact' },
 ];
 
 export default function Footer() {
@@ -29,7 +29,7 @@ export default function Footer() {
           </Link>
           <p className="company-name">Praise Security & Investigation Agency Inc.</p>
           <p className="license-info">
-            License to Operate: PSA-2025-68123<br />
+            License to Operate: PSA-WGS-000033-2024<br />
             Regulated by PNP-SOSIA
           </p>
         </div>
@@ -48,9 +48,9 @@ export default function Footer() {
         <div>
           <div className="footer-heading">CONTACT</div>
           {contactInfo.map((item) => (
-            <a key={item.label} href={item.href} className="footer-link">
+            <Link key={item.label} to={item.href} className="footer-link">
               {item.label}
-            </a>
+            </Link>
           ))}
         </div>
       </div>
