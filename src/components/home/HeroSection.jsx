@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import hero1 from '../../assets/hero1.jpg';
+import hero2 from '../../assets/hero2.jpg';
 
-const slides = [
-  'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=2070&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop',
-];
+const slides = [hero1, hero2];
 
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
