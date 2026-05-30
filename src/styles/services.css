@@ -10,12 +10,27 @@
   background: var(--navy-dark);
 }
 
+/* Background layer */
 .services-hero-bg {
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, rgba(2,18,38,0.9) 100%);
   z-index: 0;
 }
+
+/* 3D canvas container — fills right half of hero, clipped by section */
+.hero-3d-graphic {
+  position: absolute;
+  right: -2%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48%;
+  height: 115%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+
 
 /* Subtle diagonal light streak instead of checkered */
 .services-hero-bg::after {
@@ -458,11 +473,13 @@
 @media (max-width: 1024px) {
   .scope-graphic { width: 160px; height: 160px; right: 4%; }
   .services-hero-content h1 { font-size: 42px; }
+  .hero-3d-graphic { width: 45%; right: -2%; }
 }
 
 @media (max-width: 768px) {
   .services-hero-content h1 { font-size: 32px; }
   .scope-graphic { display: none; }
+  .hero-3d-graphic { display: none; }
   .modules-row--top  { grid-template-columns: 1fr; }
   .modules-row--bottom { grid-template-columns: 1fr; }
   .advantage-grid { grid-template-columns: 1fr; gap: 40px; }

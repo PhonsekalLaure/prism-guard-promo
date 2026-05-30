@@ -1,4 +1,4 @@
-import { MapPin } from 'lucide-react';
+import Scene3D from '../3d/Scene3D';
 
 export default function ContactHero() {
   return (
@@ -6,13 +6,8 @@ export default function ContactHero() {
       <div className="services-hero-bg" />
       <div className="services-hero-bottom-bar" />
 
-      <div className="contact-hero-rings" aria-hidden="true">
-        <div className="ring ring-1" />
-        <div className="ring ring-2" />
-        <div className="ring ring-3" />
-        <div className="ring-pin">
-          <MapPin size={32} strokeWidth={1.8} fill="var(--gold)" />
-        </div>
+      <div className="hero-3d-graphic">
+        <Scene3D objectType="walkie" />
       </div>
 
       <div className="services-hero-content">
@@ -33,3 +28,4 @@ export default function ContactHero() {
     </section>
   );
 }
+
