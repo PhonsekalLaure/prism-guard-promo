@@ -34,10 +34,16 @@ const INITIAL_FORM = {
   notes: '',
 };
 
-const TIME_SLOT_LABELS = {
-  morning: 'Morning (9AM - 12PM)',
-  afternoon: 'Afternoon (1PM - 5PM)',
-};
+const TIME_SLOT_GROUPS = [
+  {
+    label: 'Morning',
+    options: ['9:00 AM', '10:00 AM', '11:00 AM'],
+  },
+  {
+    label: 'Afternoon',
+    options: ['1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'],
+  },
+];
 
 function getPurposeLabel(value) {
   return PURPOSE_OPTIONS.find((option) => option.value === value)?.label || value;
@@ -75,7 +81,6 @@ export default function BookingForm({ onCancel }) {
   const minAppointmentDate = useMemo(getTodayIsoDate, []);
 
   const selectedPurposes = formData.purposes.map(getPurposeLabel).join(', ');
-  const selectedTimeSlot = TIME_SLOT_LABELS[formData.preferredTimeSlot] || formData.preferredTimeSlot;
 
   const updateField = (field, value) => {
     setFormData((current) => ({ ...current, [field]: value }));
@@ -321,9 +326,14 @@ export default function BookingForm({ onCancel }) {
                     value={formData.preferredTimeSlot}
                     onChange={(event) => updateField('preferredTimeSlot', event.target.value)}
                   >
-                    <option value="" disabled></option>
-                    <option value="morning">Morning (9AM - 12PM)</option>
-                    <option value="afternoon">Afternoon (1PM - 5PM)</option>
+                    <option value="" disabled>SELECT TIME</option>
+                    {TIME_SLOT_GROUPS.map((group) => (
+                      <optgroup label={group.label} key={group.label}>
+                        {group.options.map((time) => (
+                          <option value={time} key={time}>{time}</option>
+                        ))}
+                      </optgroup>
+                    ))}
                   </select>
                   {errors.preferredTimeSlot && <span className="field-error">{errors.preferredTimeSlot}</span>}
                 </div>
@@ -352,50 +362,56 @@ export default function BookingForm({ onCancel }) {
             <h3 className="booking-step-title">SUBMISSION CONFIRMATION</h3>
 
             <div className="booking-form-grid confirmation-grid">
-              <div className="form-group">
+              {/* Company — full width */}
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                 <label>COMPANY NAME</label>
                 <div className="form-control read-only">{formData.companyName}</div>
               </div>
+
+              {/* Representative names */}
               <div className="form-group">
                 <label>REPRESENTATIVE FIRST NAME</label>
                 <div className="form-control read-only">{formData.firstName}</div>
-              </div>
-
-              <div className="form-group">
-                <label>PURPOSE OF APPOINTMENT (CHECK ALL THAT APPLY)</label>
-                <div className="form-control read-only">{selectedPurposes}</div>
               </div>
               <div className="form-group">
                 <label>REPRESENTATIVE LAST NAME</label>
                 <div className="form-control read-only">{formData.lastName}</div>
               </div>
 
+              {/* Contact info */}
+              <div className="form-group">
+                <label>EMAIL ADDRESS</label>
+                <div className="form-control read-only">{formData.email}</div>
+              </div>
+              <div className="form-group">
+                <label>MOBILE NUMBER</label>
+                <div className="form-control read-only">{formData.mobile ? `+63 ${formData.mobile}` : ''}</div>
+              </div>
+              <div className="form-group">
+                <label>LANDLINE NUMBER (OPTIONAL)</label>
+                <div className="form-control read-only">{formData.landline || 'NONE'}</div>
+              </div>
+
+              {/* Purpose — full width */}
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label>PURPOSE OF APPOINTMENT</label>
+                <div className="form-control read-only">{selectedPurposes}</div>
+              </div>
+
+              {/* Schedule */}
               <div className="form-group">
                 <label>PREFERRED APPOINTMENT DATE</label>
                 <div className="form-control read-only">{formData.preferredDate}</div>
               </div>
               <div className="form-group">
                 <label>PREFERRED TIME SLOT</label>
-                <div className="form-control read-only">{selectedTimeSlot}</div>
-              </div>
-              <div className="form-group">
-                <label>EMAIL ADDRESS</label>
-                <div className="form-control read-only">{formData.email}</div>
+                <div className="form-control read-only">{formData.preferredTimeSlot}</div>
               </div>
 
-              <div className="form-group">
+              {/* Notes — full width */}
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                 <label>ADDITIONAL NOTES FOR APPOINTMENT</label>
                 <div className="form-control read-only textarea-readonly">{formData.notes || 'NONE'}</div>
-              </div>
-              <div className="form-col-right-spanned">
-                <div className="form-group mb-24">
-                  <label>MOBILE NUMBER</label>
-                  <div className="form-control read-only">{formData.mobile ? `+63 ${formData.mobile}` : ''}</div>
-                </div>
-                <div className="form-group">
-                  <label>LANDLINE NUMBER (OPTIONAL)</label>
-                  <div className="form-control read-only">{formData.landline || 'NONE'}</div>
-                </div>
               </div>
             </div>
 
