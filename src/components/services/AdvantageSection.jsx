@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import protectionPrecisionImage from '../../assets/protection_precision.png';
 
 const pillars = [
   {
@@ -59,8 +60,8 @@ export default function AdvantageSection() {
           <div className="advantage-image">
             <div className="advantage-image-frame">
               <img
-                src="https://images.unsplash.com/photo-1521791055366-0d553872125f?q=80&w=900&auto=format&fit=crop"
-                alt="Security Personnel"
+                src={protectionPrecisionImage}
+                alt="Security Service Agreement"
               />
               <div className="advantage-image-overlay" />
             </div>

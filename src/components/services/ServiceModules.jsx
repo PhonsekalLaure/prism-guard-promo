@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Shield, Radio, MonitorPlay, Briefcase, Users
 } from 'lucide-react';
+import assetProtectionImage from '../../assets/asset_protection.jpg';
+import executiveProtectionImage from '../../assets/executive_protection.jpg';
+import commandCenterOpsImage from '../../assets/command_center_ops.jpg';
 
 const services = [
   {
@@ -10,7 +13,7 @@ const services = [
     tag: 'CORE SERVICE',
     desc: 'Maximum security coverage for lives, assets, and properties that your business relies on. Our guards are trained to prevent pilferage, arson, and sabotage — backed by a Comprehensive Security Plan tailored to your operations.',
     features: ['>> Perimeter Guard Deployment', '>> Anti-Pilferage Protocols', '>> Crisis Management'],
-    image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=900&auto=format&fit=crop',
+    image: assetProtectionImage,
   },
   {
     Icon: Users,
@@ -18,7 +21,7 @@ const services = [
     tag: 'ELITE UNIT',
     desc: 'Close protection services for executives and high-value individuals. Our elite personnel are trained in civil disturbance control, threat assessment, and rapid evacuation — designed for the nature of your business.',
     features: ['>> Personal Detail Assignments', '>> Civil Disturbance Control', '>> Threat & Risk Assessment'],
-    image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=900&auto=format&fit=crop',
+    image: executiveProtectionImage,
   },
   {
     Icon: Radio,
@@ -26,7 +29,7 @@ const services = [
     tag: '24/7 OPERATIONS',
     desc: 'Our headquarters never sleeps. A dedicated Night Inspector conducts daily guard inspections to ensure quality and accountability. Real-time radio communication keeps all deployed units connected at all times.',
     features: ['>> 24/7 HQ Response', '>> Base & Handheld Radio Network', '>> Night Inspection Rounds'],
-    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=900&auto=format&fit=crop',
+    image: commandCenterOpsImage,
   },
   {
     Icon: MonitorPlay,
