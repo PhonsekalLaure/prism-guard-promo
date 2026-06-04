@@ -45,7 +45,7 @@ export default function ActiveClients() {
           <h2>ACTIVE CLIENTS</h2>
           <div className="section-title-underline" />
           <p className="section-subtitle" style={{ color: 'rgba(9,50,105,0.55)' }}>
-            Companies currently under Prism-Guard protection.
+            Companies currently under Praise Security protection.
           </p>
         </div>
 

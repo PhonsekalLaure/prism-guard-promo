@@ -46,9 +46,9 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Client Login */}
+        {/* Login */}
         <a className="btn-login" href={clientLoginUrl}>
-          CLIENT LOGIN
+          LOGIN
         </a>
 
         {/* Mobile Toggle */}
@@ -79,7 +79,7 @@ export default function Navbar() {
             href={clientLoginUrl}
             onClick={() => setMobileOpen(false)}
           >
-            CLIENT LOGIN
+            LOGIN
           </a>
         </div>
       )}

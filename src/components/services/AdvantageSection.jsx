@@ -41,7 +41,7 @@ export default function AdvantageSection() {
         >
           {/* Text side */}
           <div className="advantage-text">
-            <span className="advantage-eyebrow">// THE PRISM-GUARD APPROACH</span>
+            <span className="advantage-eyebrow">// THE PRAISE SECURITY APPROACH</span>
             <h2>
               PROTECTION WITH<br />
               <span className="gold">PRECISION.</span>

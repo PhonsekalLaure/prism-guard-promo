@@ -20,7 +20,7 @@ export default function ClientsHero() {
           PARTNERS
         </h1>
         <p className="hero-desc">
-          // COMPANIES UNDER ACTIVE PRISM-GUARD PROTECTION<br />
+          // COMPANIES UNDER ACTIVE PRAISE SECURITY PROTECTION<br />
           // ASSET SECURITY. PEACE OF MIND. 24/7.<br />
           // EACH CLIENT — A COMMITMENT FULFILLED
         </p>

@@ -48,7 +48,7 @@ export default function ReadyToSecure() {
               YOUR <span className="gold">ASSETS?</span>
             </h2>
             <p className="secure-desc">
-              Join the growing list of companies that trust Prism-Guard with their
+              Join the growing list of companies that trust Praise Security with their
               most critical assets. Our deployment process is fast, thorough, and
               built around your operations.
             </p>
@@ -87,7 +87,7 @@ export default function ReadyToSecure() {
 
               {/* Commitment headline */}
               <div className="secure-commitment">
-                <span className="secure-commitment-tag">// THE PRISM-GUARD STANDARD</span>
+                <span className="secure-commitment-tag">// THE PRAISE SECURITY STANDARD</span>
                 <p className="secure-commitment-text">
                   EVERY ASSET.<br />EVERY HOUR.
                 </p>
