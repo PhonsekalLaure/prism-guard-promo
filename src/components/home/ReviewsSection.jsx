@@ -1,53 +1,50 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-const reviews = [
-  {
-    quote:
-      '"Praise Security has drastically improved our gate protocols. Their guards are disciplined, properly uniformed, and their daily reports are always on time."',
-    client: 'SM Mall of Asia',
-    id: 'Operations Manager',
-  },
-  {
-    quote:
-      '"The level of professionalism from Praise Security is unmatched. Their command center responsiveness and guard discipline set them apart from other agencies."',
-    client: 'Ayala Land',
-    id: 'Facilities Director',
-  },
-  {
-    quote:
-      '"We have been partnering with Praise Security for over two years. Their guards are well-trained, reliable, and their reporting system is seamless."',
-    client: 'Robinsons Malls',
-    id: 'Security Coordinator',
-  },
-  {
-    quote:
-      '"Exceptional service from deployment to daily operations. Praise Security truly understands enterprise-level security requirements."',
-    client: 'ICTSI Port Operations',
-    id: 'Site Supervisor',
-  },
-  {
-    quote:
-      '"Their real-time tracking system gave us full visibility of guard positions at all times. Highly recommended for large industrial sites."',
-    client: 'San Miguel Corporation',
-    id: 'Head of Security',
-  },
-];
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { getPromoServiceReviews } from '../../services/promoClients';
 
 const CARDS_VISIBLE = 3;
+
+function normalizeRating(value) {
+  const rating = Number(value);
+  if (!Number.isFinite(rating)) return 0;
+  return Math.min(Math.max(rating, 0), 5);
+}
+
+function StarRating({ rating }) {
+  const normalized = normalizeRating(rating);
+  const rounded = Math.round(normalized);
+
+  return (
+    <div className="review-rating" aria-label={`${normalized.toFixed(1)} out of 5 stars`}>
+      <span className="review-stars" aria-hidden="true">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <Star
+            key={index}
+            size={14}
+            className={index < rounded ? 'review-star filled' : 'review-star'}
+          />
+        ))}
+      </span>
+      <span className="review-rating-value">{normalized.toFixed(1)}</span>
+    </div>
+  );
+}
 
 export default function ReviewsSection() {
   const sectionRef = useRef(null);
   const [visible, setVisible] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [status, setStatus] = useState('loading');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [direction, setDirection] = useState('next'); // 'next' | 'prev'
+  const [direction, setDirection] = useState('next');
 
   const totalSlides = reviews.length;
-  const maxIndex = totalSlides - CARDS_VISIBLE;
+  const visibleCount = Math.min(CARDS_VISIBLE, totalSlides);
+  const maxIndex = Math.max(totalSlides - visibleCount, 0);
+  const hasReviews = totalSlides > 0;
 
-  // Section entrance reveal
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -62,32 +59,52 @@ export default function ReviewsSection() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    getPromoServiceReviews()
+      .then((data) => {
+        if (!isMounted) return;
+        setReviews(data);
+        setActiveIndex(0);
+        setStatus('success');
+      })
+      .catch((err) => {
+        console.error('[getPromoServiceReviews Error]:', err);
+        if (isMounted) setStatus('error');
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const goTo = useCallback((index, dir = 'next') => {
-    if (isAnimating) return;
+    if (isAnimating || !hasReviews) return;
     setIsAnimating(true);
     setDirection(dir);
-    setActiveIndex(index);
+    setActiveIndex(Math.min(Math.max(index, 0), maxIndex));
     setTimeout(() => setIsAnimating(false), 500);
-  }, [isAnimating]);
+  }, [hasReviews, isAnimating, maxIndex]);
 
   const goNext = useCallback(() => {
+    if (!hasReviews) return;
     const next = activeIndex >= maxIndex ? 0 : activeIndex + 1;
     goTo(next, 'next');
-  }, [activeIndex, maxIndex, goTo]);
+  }, [activeIndex, hasReviews, maxIndex, goTo]);
 
   const goPrev = useCallback(() => {
+    if (!hasReviews) return;
     const prev = activeIndex <= 0 ? maxIndex : activeIndex - 1;
     goTo(prev, 'prev');
-  }, [activeIndex, maxIndex, goTo]);
+  }, [activeIndex, hasReviews, maxIndex, goTo]);
 
-  // Auto-advance
   useEffect(() => {
-    if (isPaused || !visible) return;
+    if (isPaused || !visible || !hasReviews || maxIndex === 0) return;
     const timer = setInterval(goNext, 5000);
     return () => clearInterval(timer);
-  }, [isPaused, visible, goNext]);
+  }, [hasReviews, isPaused, maxIndex, visible, goNext]);
 
-  // Keyboard support
   useEffect(() => {
     const handleKey = (e) => {
       if (e.key === 'ArrowRight') goNext();
@@ -97,7 +114,7 @@ export default function ReviewsSection() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [goNext, goPrev]);
 
-  const visibleReviews = reviews.slice(activeIndex, activeIndex + CARDS_VISIBLE);
+  const visibleReviews = reviews.slice(activeIndex, activeIndex + visibleCount);
 
   return (
     <section
@@ -108,7 +125,6 @@ export default function ReviewsSection() {
       onMouseLeave={() => setIsPaused(false)}
     >
       <div className="container">
-        {/* Header */}
         <div
           className="section-title"
           style={{
@@ -121,7 +137,6 @@ export default function ReviewsSection() {
           <div className="section-title-underline" />
         </div>
 
-        {/* Carousel wrapper */}
         <div
           className="reviews-carousel-wrapper"
           style={{
@@ -130,69 +145,92 @@ export default function ReviewsSection() {
             transition: 'all 0.7s ease 0.2s',
           }}
         >
-          {/* Prev Arrow */}
-          <button
-            className="carousel-arrow carousel-arrow--prev"
-            onClick={goPrev}
-            aria-label="Previous reviews"
-          >
-            <ChevronLeft size={22} />
-          </button>
+          {hasReviews && maxIndex > 0 && (
+            <button
+              className="carousel-arrow carousel-arrow--prev"
+              onClick={goPrev}
+              aria-label="Previous reviews"
+            >
+              <ChevronLeft size={22} />
+            </button>
+          )}
 
-          {/* Cards track */}
-          <div className={`reviews-track reviews-track--${direction} ${isAnimating ? 'animating' : ''}`}>
-            {visibleReviews.map((review, index) => (
-              <div
-                key={`${activeIndex}-${index}`}
-                className="review-card"
-                style={{ animationDelay: `${index * 0.07}s` }}
-              >
-                <div className="review-tag">&gt;&gt; VERIFIED ENTRY</div>
-                <span className="review-quote-icon">&ldquo;</span>
-                <p className="review-quote">{review.quote}</p>
-                <div className="review-footer">
-                  <div className="review-client">{review.client}</div>
-                  <span className="review-id">— {review.id}</span>
+          {status === 'loading' && (
+            <div className="reviews-message">
+              <span className="reviews-message-dot" />
+              Loading published client feedback...
+            </div>
+          )}
+
+          {status === 'error' && (
+            <div className="reviews-message reviews-message--error">
+              Unable to load published client feedback.
+            </div>
+          )}
+
+          {status === 'success' && !hasReviews && (
+            <div className="reviews-message">No published client feedback yet.</div>
+          )}
+
+          {hasReviews && (
+            <div className={`reviews-track reviews-track--${direction} reviews-track--count-${visibleReviews.length} ${isAnimating ? 'animating' : ''}`}>
+              {visibleReviews.map((review, index) => (
+                <div
+                  key={`${review.id}-${activeIndex}-${index}`}
+                  className="review-card"
+                  style={{ animationDelay: `${index * 0.07}s` }}
+                >
+                  <div className="review-tag">&gt;&gt; VERIFIED ENTRY</div>
+                  <StarRating rating={review.rating} />
+                  <span className="review-quote-icon">&ldquo;</span>
+                  <p className="review-quote">{review.quote}</p>
+                  <div className="review-footer">
+                    <div className="review-client">{review.client}</div>
+                    <span className="review-id">- {review.context}</span>
+                  </div>
                 </div>
-              </div>
+              ))}
+            </div>
+          )}
+
+          {hasReviews && maxIndex > 0 && (
+            <button
+              className="carousel-arrow carousel-arrow--next"
+              onClick={goNext}
+              aria-label="Next reviews"
+            >
+              <ChevronRight size={22} />
+            </button>
+          )}
+        </div>
+
+        {hasReviews && maxIndex > 0 && (
+          <div
+            className="reviews-dots"
+            style={{
+              opacity: visible ? 1 : 0,
+              transition: 'opacity 0.7s ease 0.5s',
+            }}
+          >
+            {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+              <button
+                key={i}
+                className={`reviews-dot ${i === activeIndex ? 'active' : ''}`}
+                onClick={() => goTo(i, i > activeIndex ? 'next' : 'prev')}
+                aria-label={`Go to review set ${i + 1}`}
+              />
             ))}
           </div>
+        )}
 
-          {/* Next Arrow */}
-          <button
-            className="carousel-arrow carousel-arrow--next"
-            onClick={goNext}
-            aria-label="Next reviews"
-          >
-            <ChevronRight size={22} />
-          </button>
-        </div>
-
-        {/* Dot indicators */}
-        <div
-          className="reviews-dots"
-          style={{
-            opacity: visible ? 1 : 0,
-            transition: 'opacity 0.7s ease 0.5s',
-          }}
-        >
-          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-            <button
-              key={i}
-              className={`reviews-dot ${i === activeIndex ? 'active' : ''}`}
-              onClick={() => goTo(i, i > activeIndex ? 'next' : 'prev')}
-              aria-label={`Go to review set ${i + 1}`}
+        {hasReviews && maxIndex > 0 && (
+          <div className="reviews-progress">
+            <div
+              className={`reviews-progress-bar ${isPaused ? 'paused' : ''}`}
+              key={activeIndex}
             />
-          ))}
-        </div>
-
-        {/* Auto-play progress bar */}
-        <div className="reviews-progress">
-          <div
-            className={`reviews-progress-bar ${isPaused ? 'paused' : ''}`}
-            key={activeIndex}
-          />
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );
