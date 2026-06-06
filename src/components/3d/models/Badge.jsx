@@ -96,7 +96,6 @@ export default function Badge({ mouseRef }) {
   const ring1Ref  = useRef(); // rings live OUTSIDE badge group
   const ring2Ref  = useRef();
   const ring3Ref  = useRef();
-  const glowRef   = useRef();
 
   useFrame((state, delta) => {
     const mouse = mouseRef?.current;
@@ -121,10 +120,6 @@ export default function Badge({ mouseRef }) {
     ring1Ref.current.rotation.z += delta * 0.22;
     ring2Ref.current.rotation.x += delta * 0.28;
     ring3Ref.current.rotation.z -= delta * 0.16;
-
-    // Atmospheric glow pulse
-    const p = Math.sin(state.clock.elapsedTime * 1.6) * 0.5 + 0.5;
-    glowRef.current.material.opacity = 0.03 + p * 0.05;
   });
 
   return (
@@ -132,12 +127,6 @@ export default function Badge({ mouseRef }) {
 
       {/* ── BADGE BODY — tilts with mouse/idle ── */}
       <group ref={groupRef} scale={1.1}>
-
-        {/* Outer atmospheric glow */}
-        <mesh ref={glowRef}>
-          <sphereGeometry args={[3.0, 32, 32]} />
-          <meshBasicMaterial color="#e6b215" transparent opacity={0.04} side={THREE.BackSide} />
-        </mesh>
 
         {/* Outer gold border — raised bevel */}
         <mesh position={[0, 0, -0.01]}>
