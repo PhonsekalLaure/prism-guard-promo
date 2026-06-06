@@ -5,7 +5,6 @@ import Globe from './models/Globe';
 import Prism from './models/Prism';
 import WalkieTalkie from './models/WalkieTalkie';
 import Badge from './models/Badge';
-import Recruit from './models/Recruit';
 import Radar from './models/Radar';
 import { Suspense, useRef, useCallback } from 'react';
 import * as THREE from 'three';
@@ -16,7 +15,6 @@ const modelMap = {
   prism: Prism,
   walkie: WalkieTalkie,
   badge: Badge,
-  recruit: Recruit,
   radar: Radar,
 };
 
