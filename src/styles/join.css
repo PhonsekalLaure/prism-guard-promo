@@ -213,4 +213,12 @@
   .join-hero-deco { display: none; }
   .portal-grid { grid-template-columns: 1fr; }
   .portal-card { padding: 28px 20px; }
+  .portal-section { padding: 72px 0; }
+}
+
+@media (max-width: 480px) {
+  .portal-section { padding: 60px 0; }
+  .portal-card { padding: 24px 16px; }
+  .portal-title { font-size: 20px; }
+  .portal-btn { font-size: 13px; padding: 12px 0; }
 }

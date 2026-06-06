@@ -381,13 +381,26 @@
 /* ==================== ABOUT RESPONSIVE ==================== */
 @media (max-width: 1024px) {
   .about-hero-deco { width: 200px; height: 200px; right: 4%; }
+  .family-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
   .about-hero-deco { display: none; }
   .directives-grid { grid-template-columns: 1fr; }
-  .family-grid { grid-template-columns: 1fr; }
+  .family-grid { grid-template-columns: 1fr; gap: 32px; }
+  .family-image { height: 240px; }
+  .timeline-item { gap: 16px; }
+  .timeline-content { padding: 20px; }
+  .directives-section, .family-section, .timeline-section { padding: 72px 0; }
+}
+
+@media (max-width: 480px) {
+  .directive-card { padding: 24px; }
+  .directive-card h3 { font-size: 20px; }
   .family-image { height: 200px; }
-  .timeline-item { gap: 20px; }
-  .timeline-content { padding: 18px 20px; }
+  .timeline-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .timeline::before { left: 16px; }
+  .timeline-marker { width: 34px; padding-top: 2px; }
+  .timeline-dot { width: 14px; height: 14px; }
+  .timeline-year { font-size: 18px; }
 }

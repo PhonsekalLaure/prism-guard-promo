@@ -778,12 +778,14 @@
 /* ==================== HOMEPAGE RESPONSIVE ==================== */
 @media (max-width: 1024px) {
   .reviews-track { grid-template-columns: repeat(2, 1fr); }
+  .hero-text h1 { font-size: 50px; }
+  .stats-grid { gap: 16px; }
 }
 
 @media (max-width: 768px) {
-  .hero { height: auto; min-height: 85vh; }
+  .hero { height: auto; min-height: 85vh; padding-top: 80px; }
   .hero-text h1 { font-size: 36px; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
   .protocol-grid { flex-direction: column; }
   .protocol-icon { display: none; }
   .reviews-section { padding: 72px 0; }
@@ -791,12 +793,22 @@
   .reviews-track { grid-template-columns: 1fr; }
   .carousel-arrow { display: none; }
   .reviews-dots { margin-top: 24px; }
+  
+  .btn-primary, .btn-outline-white {
+    padding: 12px 24px;
+    font-size: 13px;
+    width: 100%;
+    text-align: center;
+  }
 }
 
 @media (max-width: 480px) {
   .hero-text h1 { font-size: 30px; }
   .stats-grid { grid-template-columns: 1fr; }
   .hero-desc { font-size: 0.75em; }
+  .section-title h2 { font-size: 28px; }
+  .protocol-header h2 { font-size: 28px; }
+  .stat-box { padding-left: 16px; }
 }
 
 /* ==================== EXTRA ANIMATIONS ==================== */

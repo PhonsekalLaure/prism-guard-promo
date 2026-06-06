@@ -473,4 +473,16 @@
   .secure-highlight-inner { padding: 28px; }
   .secure-metrics { grid-template-columns: 1fr; gap: 24px; }
   .secure-commitment-text { font-size: 28px; }
+  .clients-section { padding: 72px 0; }
+  .secure-section { padding: 72px 0; }
+}
+
+@media (max-width: 480px) {
+  .clients-section { padding: 60px 0; }
+  .secure-section { padding: 60px 0; }
+  .secure-text h2 { font-size: 26px; }
+  .secure-commitment-text { font-size: 22px; }
+  .clients-message { padding: 20px; }
+  .secure-actions { flex-direction: column; }
+  .btn-primary, .btn-outline-white { width: 100%; text-align: center; }
 }

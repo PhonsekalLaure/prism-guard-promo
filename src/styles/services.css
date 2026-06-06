@@ -487,6 +487,15 @@
   .advantage-image-frame img { height: 280px; }
   .advantage-stat-chip { bottom: -14px; }
   .pillars-grid { grid-template-columns: 1fr; }
-  .resources-list { grid-template-columns: 1fr; }
   .advantage-text h2 { font-size: 32px; }
+  .services-modules { padding: 60px 0; }
+  .advantage-section { padding: 60px 0; }
+}
+
+@media (max-width: 480px) {
+  .services-hero-content h1 { font-size: 26px; }
+  .advantage-text h2 { font-size: 26px; }
+  .module-card { margin-bottom: 8px; }
+  .advantage-stat-chip { padding: 8px 12px; }
+  .chip-num { font-size: 18px; }
 }
