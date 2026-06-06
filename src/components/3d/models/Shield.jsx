@@ -1,149 +1,231 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { useTexture, Decal } from '@react-three/drei';
 import * as THREE from 'three';
 
-function createShieldShape() {
+/* ─── Shield outline shape ─────────────────────────────────────────────────── */
+function createShieldShape(scale = 1) {
+  const s = new THREE.Shape();
+  s.moveTo(0, 2.0 * scale);
+  s.lineTo(1.5 * scale, 1.4 * scale);
+  s.lineTo(1.5 * scale, 0.2 * scale);
+  s.bezierCurveTo(1.5 * scale, -0.8 * scale, 0.8 * scale, -1.6 * scale, 0, -2.2 * scale);
+  s.bezierCurveTo(-0.8 * scale, -1.6 * scale, -1.5 * scale, -0.8 * scale, -1.5 * scale, 0.2 * scale);
+  s.lineTo(-1.5 * scale, 1.4 * scale);
+  s.lineTo(0, 2.0 * scale);
+  return s;
+}
+
+/* ─── Mini star geometry (for corner accents) ──────────────────────────────── */
+function createMiniStarGeometry(outerR = 0.13, innerR = 0.06, points = 5) {
   const shape = new THREE.Shape();
-  shape.moveTo(0, 2.0);
-  shape.lineTo(1.5, 1.4);
-  shape.lineTo(1.5, 0.2);
-  shape.bezierCurveTo(1.5, -0.8, 0.8, -1.6, 0, -2.2);
-  shape.bezierCurveTo(-0.8, -1.6, -1.5, -0.8, -1.5, 0.2);
-  shape.lineTo(-1.5, 1.4);
-  shape.lineTo(0, 2.0);
-  return shape;
-}
-
-function createStarShape() {
-  const star = new THREE.Shape();
-  for (let i = 0; i < 10; i++) {
-    const a = (i / 10) * Math.PI * 2 - Math.PI / 2;
-    const r = i % 2 === 0 ? 0.52 : 0.24;
-    const x = Math.cos(a) * r;
-    const y = Math.sin(a) * r;
-    if (i === 0) star.moveTo(x, y);
-    else star.lineTo(x, y);
+  for (let i = 0; i < points * 2; i++) {
+    const a = (i / (points * 2)) * Math.PI * 2 - Math.PI / 2;
+    const r = i % 2 === 0 ? outerR : innerR;
+    if (i === 0) shape.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+    else shape.lineTo(Math.cos(a) * r, Math.sin(a) * r);
   }
-  star.closePath();
-  return new THREE.ShapeGeometry(star, 4);
+  shape.closePath();
+  return new THREE.ShapeGeometry(shape, 4);
 }
 
+/* ─── Ambient glow sphere ───────────────────────────────────────────────────── */
 function ShieldGlow() {
   const ref = useRef();
   useFrame((state) => {
     const pulse = Math.sin(state.clock.elapsedTime * 1.8) * 0.5 + 0.5;
-    ref.current.material.opacity = 0.04 + pulse * 0.06;
+    ref.current.material.opacity = 0.04 + pulse * 0.08;
   });
   return (
     <mesh ref={ref}>
-      <sphereGeometry args={[3.0, 32, 32]} />
+      <sphereGeometry args={[3.4, 32, 32]} />
       <meshBasicMaterial color="#e6b215" transparent opacity={0.05} side={THREE.BackSide} />
     </mesh>
   );
 }
 
-function ShieldInnerRune({ dir, color, opacity, radius }) {
-  const ref = useRef();
-  useFrame((_, delta) => {
-    ref.current.rotation.z += delta * dir * 0.4;
+
+/* ─── Corner accent star sparks ────────────────────────────────────────────── */
+const miniStarGeo = createMiniStarGeometry(0.13, 0.055, 5);
+
+function CornerStar({ x, y, phaseOffset = 0 }) {
+  const meshRef = useRef();
+  useFrame((state) => {
+    const t = Math.sin(state.clock.elapsedTime * 2.2 + phaseOffset) * 0.5 + 0.5;
+    meshRef.current.material.opacity = 0.35 + t * 0.55;
+    meshRef.current.rotation.z = state.clock.elapsedTime * 0.6 + phaseOffset;
   });
   return (
-    <group ref={ref} position={[0, -0.1, 0.22]}>
-      <mesh>
-        <torusGeometry args={[radius, 0.014, 16, 64]} />
-        <meshBasicMaterial color={color} transparent opacity={opacity} />
-      </mesh>
-    </group>
+    <mesh ref={meshRef} geometry={miniStarGeo} position={[x, y, 0.35]}>
+      <meshBasicMaterial color="#ffe066" transparent opacity={0.55} depthWrite={false} />
+    </mesh>
   );
 }
 
-export default function Shield() {
-  const groupRef = useRef();
-  const innerRef = useRef();
+/* ─── Logo decal on shield face ─────────────────────────────────────────────── */
+function ShieldLogo() {
+  const texture = useTexture('/favicon.png');
+  texture.colorSpace = THREE.SRGBColorSpace;
+  
+  return (
+    <Decal
+      position={[0, -0.05, 0.01]}
+      rotation={[0, 0, 0]}
+      scale={2.8}
+      map={texture}
+    />
+  );
+}
 
-  const shieldGeo = useMemo(() => {
-    const shape = createShieldShape();
-    return new THREE.ExtrudeGeometry(shape, {
-      depth: 0.28,
+/* ─── Main shield component ─────────────────────────────────────────────────── */
+export default function Shield({ mouseRef }) {
+  const groupRef  = useRef();
+  const coronaRef = useRef();
+
+  /* Gold outer border geometry */
+  const borderGeo = useMemo(() =>
+    new THREE.ExtrudeGeometry(createShieldShape(1.12), {
+      depth: 0.10,
       bevelEnabled: true,
       bevelThickness: 0.06,
       bevelSize: 0.06,
-      bevelSegments: 4,
-    });
-  }, []);
+      bevelSegments: 8,
+    }), []);
 
-  const borderGeo = useMemo(() => {
-    const shape = createShieldShape();
-    return new THREE.ExtrudeGeometry(shape, {
-      depth: 0.14,
+  /* Main shield body */
+  const shieldGeo = useMemo(() =>
+    new THREE.ExtrudeGeometry(createShieldShape(1.0), {
+      depth: 0.30,
       bevelEnabled: true,
-      bevelThickness: 0.04,
-      bevelSize: 0.04,
-      bevelSegments: 4,
-    });
-  }, []);
+      bevelThickness: 0.09,
+      bevelSize: 0.08,
+      bevelSegments: 8,
+    }), []);
 
-  const starGeo = useMemo(() => createStarShape(), []);
+  /* Flat inner face plate */
+  const facePlateGeo = useMemo(() =>
+    new THREE.ExtrudeGeometry(createShieldShape(0.83), {
+      depth: 0.01,
+      bevelEnabled: false,
+    }), []);
 
-  // Shield shape Y center: (2.0 + -2.2) / 2 = -0.1
-  const centerY = -0.1;
+  /* Back-face corona */
+  const coronaGeo = useMemo(() =>
+    new THREE.ExtrudeGeometry(createShieldShape(1.18), {
+      depth: 0.01,
+      bevelEnabled: false,
+    }), []);
 
   useFrame((state, delta) => {
-    groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.35;
-    groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.3) * 0.05;
-    innerRef.current.rotation.z += delta * 0.3;
+    const mouse = mouseRef?.current;
+    const hoverLerp = 1 - Math.pow(0.001, delta);
+    const idleLerp  = 1 - Math.pow(0.05,  delta);
+
+    if (mouse?.hovering) {
+      groupRef.current.rotation.y += (mouse.x * 0.7  - groupRef.current.rotation.y) * hoverLerp;
+      groupRef.current.rotation.x += (-mouse.y * 0.4 - groupRef.current.rotation.x) * hoverLerp;
+      groupRef.current.rotation.z += (0              - groupRef.current.rotation.z) * hoverLerp;
+    } else {
+      const idleY = Math.sin(state.clock.elapsedTime * 0.5) * 0.38;
+      groupRef.current.rotation.y += (idleY - groupRef.current.rotation.y) * idleLerp;
+      groupRef.current.rotation.x += (0     - groupRef.current.rotation.x) * idleLerp;
+      groupRef.current.rotation.z += (Math.sin(state.clock.elapsedTime * 0.3) * 0.05 - groupRef.current.rotation.z) * idleLerp;
+    }
+
+    /* Corona pulse */
+    const p = Math.sin(state.clock.elapsedTime * 2.0) * 0.5 + 0.5;
+    coronaRef.current.material.opacity = 0.18 + p * 0.22;
+
+
   });
 
   return (
-    <group ref={groupRef} position={[0, centerY * -0.88, 0]} scale={0.88}>
+    <group ref={groupRef} position={[0, 0.088, 0]} scale={0.88}>
       <ShieldGlow />
 
-      {/* Gold border (behind) */}
-      <mesh geometry={borderGeo} position={[0, 0, -0.05]}>
-        <meshStandardMaterial
+      {/* ── 1. Back corona rim glow ── */}
+      <mesh ref={coronaRef} geometry={coronaGeo} position={[0, 0, -0.18]}>
+        <meshBasicMaterial
           color="#e6b215"
-          metalness={1}
-          roughness={0.1}
-          emissive="#e6b215"
-          emissiveIntensity={0.25}
+          transparent
+          opacity={0.25}
+          side={THREE.BackSide}
+          depthWrite={false}
         />
       </mesh>
 
-      {/* Main shield body */}
+      {/* ── 2. Gold outer border ── */}
+      <mesh geometry={borderGeo} position={[0, 0, -0.10]}>
+        <meshPhysicalMaterial
+          color="#b8800a"
+          metalness={1}
+          roughness={0.04}
+          envMapIntensity={4}
+          emissive="#e6a800"
+          emissiveIntensity={0.6}
+          clearcoat={1}
+          clearcoatRoughness={0.04}
+          reflectivity={1}
+        />
+      </mesh>
+
+      {/* ── 3. Main shield body — deep navy ── */}
       <mesh geometry={shieldGeo} position={[0, 0, 0]}>
         <meshPhysicalMaterial
-          color="#e6b215"
-          metalness={0.95}
-          roughness={0.12}
-          emissive="#e6b215"
-          emissiveIntensity={0.4}
+          color="#1a1f3a"
+          metalness={0.85}
+          roughness={0.18}
+          envMapIntensity={3}
+          emissive="#0a0e22"
+          emissiveIntensity={1.0}
           clearcoat={1}
-          clearcoatRoughness={0.1}
+          clearcoatRoughness={0.06}
+          reflectivity={1}
+          iridescence={0.6}
+          iridescenceIOR={1.8}
+          sheen={0.8}
+          sheenColor="#3a5aff"
+          sheenRoughness={0.3}
         />
       </mesh>
 
-      {/* Gold horizontal divider */}
-      <mesh position={[0, 0.45, 0.22]}>
-        <boxGeometry args={[2.6, 0.022, 0.01]} />
-        <meshBasicMaterial color="#e6b215" transparent opacity={0.55} />
+      {/* ── 4. Dark navy face plate with Logo Decal ── */}
+      <mesh geometry={facePlateGeo} position={[0, 0, 0.30]}>
+        <meshPhysicalMaterial
+          color="#0d1128"
+          metalness={0.5}
+          roughness={0.35}
+          emissive="#101840"
+          emissiveIntensity={0.8}
+          clearcoat={0.6}
+          clearcoatRoughness={0.2}
+          transparent
+          opacity={0.92}
+        />
+        {/* ── 5. PrismGuard logo decal projected onto the face plate ── */}
+        <ShieldLogo />
       </mesh>
 
-      {/* Inner emblem group — rotates */}
-      <group ref={innerRef} position={[0, -0.2, 0.25]}>
-        {/* Gold star */}
-        <mesh geometry={starGeo}>
-          <meshStandardMaterial color="#e6b215" emissive="#e6b215" emissiveIntensity={0.8} />
-        </mesh>
-        {/* Green center orb */}
-        <mesh>
-          <sphereGeometry args={[0.13, 16, 16]} />
-          <meshStandardMaterial color="#4ade80" emissive="#4ade80" emissiveIntensity={3} />
-        </mesh>
-      </group>
+      {/* ── 6. Gold horizontal divider ── */}
+      <mesh position={[0, 0.42, 0.34]}>
+        <boxGeometry args={[2.2, 0.025, 0.01]} />
+        <meshBasicMaterial color="#e6b215" transparent opacity={0.7} depthWrite={false} />
+      </mesh>
 
-      {/* Inner concentric rings */}
-      <ShieldInnerRune dir={1}  color="#e6b215" opacity={0.4} radius={0.72} />
-      <ShieldInnerRune dir={-1} color="#4ade80" opacity={0.2} radius={0.95} />
+
+
+      {/* ── 9. Pentagon corner star accents ── */}
+      {Array.from({ length: 5 }).map((_, i) => {
+        const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+        return (
+          <CornerStar
+            key={i}
+            x={Math.cos(angle) * 1.18}
+            y={Math.sin(angle) * 1.05}
+            phaseOffset={i * 1.26}
+          />
+        );
+      })}
     </group>
   );
 }

@@ -33,7 +33,6 @@ function LatLines() {
   const lines = useMemo(() => {
     const result = [];
     const r = 1.52;
-    // Latitude rings (horizontal)
     for (let i = 1; i <= 5; i++) {
       const phi = (i / 6) * Math.PI;
       const y = Math.cos(phi) * r;
@@ -45,7 +44,6 @@ function LatLines() {
       }
       result.push({ pts, color: '#e6b215', opacity: 0.12 });
     }
-    // Longitude lines (vertical)
     for (let i = 0; i < 8; i++) {
       const angle = (i / 8) * Math.PI * 2;
       const pts = [];
@@ -76,34 +74,49 @@ function LatLines() {
   );
 }
 
-export default function Globe() {
+export default function Globe({ mouseRef }) {
+  const groupRef = useRef();
   const coreRef = useRef();
   const ring1Ref = useRef();
   const ring2Ref = useRef();
   const ring3Ref = useRef();
 
   useFrame((state, delta) => {
-    // Globe rotates slowly around Y — clean, readable
+    const mouse = mouseRef?.current;
+    const hoverLerp = 1 - Math.pow(0.001, delta);
+    const idleLerp  = 1 - Math.pow(0.04,  delta);
+
+    if (mouse?.hovering) {
+      const targetY = mouse.x * 0.8;
+      const targetX = -mouse.y * 0.5;
+      groupRef.current.rotation.y += (targetY - groupRef.current.rotation.y) * hoverLerp;
+      groupRef.current.rotation.x += (targetX - groupRef.current.rotation.x) * hoverLerp;
+    } else {
+      groupRef.current.rotation.y += (0 - groupRef.current.rotation.y) * idleLerp;
+      groupRef.current.rotation.x += (0 - groupRef.current.rotation.x) * idleLerp;
+    }
+
+    // Globe core always rotates
     coreRef.current.rotation.y += delta * 0.1;
 
-    // Each ring tilted on a fixed axis, rotates on its own plane
+    // Each ring on its own plane, always spinning
     ring1Ref.current.rotation.z += delta * 0.18;
     ring2Ref.current.rotation.x += delta * 0.22;
     ring3Ref.current.rotation.z -= delta * 0.12;
   });
 
   return (
-    <group scale={1.3}>
-      {/* Core globe */}
+    <group ref={groupRef} scale={1.3}>
+      {/* Core globe — deep crimson teal instead of navy */}
       <group ref={coreRef}>
         <mesh>
           <sphereGeometry args={[1.5, 48, 48]} />
           <meshPhysicalMaterial
-            color="#021a38"
-            metalness={0.3}
-            roughness={0.7}
-            emissive="#0a2a50"
-            emissiveIntensity={0.25}
+            color="#0d1f2d"
+            metalness={0.25}
+            roughness={0.65}
+            emissive="#0a3040"
+            emissiveIntensity={0.3}
           />
         </mesh>
         <LatLines />
@@ -114,6 +127,12 @@ export default function Globe() {
           <meshBasicMaterial color="#e6b215" transparent opacity={0.65} />
         </mesh>
       </group>
+
+      {/* Atmospheric haze — teal tint */}
+      <mesh>
+        <sphereGeometry args={[1.65, 32, 32]} />
+        <meshBasicMaterial color="#0a3040" transparent opacity={0.08} side={THREE.BackSide} />
+      </mesh>
 
       {/* Orbiting rings — each on a fixed, pre-tilted axis */}
       <group rotation={[0.4, 0, 0]} ref={ring1Ref}>
@@ -131,15 +150,9 @@ export default function Globe() {
       <group rotation={[-0.3, 0, -0.5]} ref={ring3Ref}>
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[2.55, 0.007, 12, 128]} />
-          <meshBasicMaterial color="#093269" transparent opacity={0.5} />
+          <meshBasicMaterial color="#22d3ee" transparent opacity={0.4} />
         </mesh>
       </group>
-
-      {/* Atmospheric haze */}
-      <mesh>
-        <sphereGeometry args={[1.65, 32, 32]} />
-        <meshBasicMaterial color="#093269" transparent opacity={0.06} side={THREE.BackSide} />
-      </mesh>
     </group>
   );
 }
