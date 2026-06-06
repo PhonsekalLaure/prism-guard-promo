@@ -565,6 +565,24 @@ select.select-input {
   }
 }
 
+@media (max-width: 480px) {
+  .booking-container {
+    padding: 20px 16px;
+  }
+  .step-content {
+    padding: 24px 16px;
+  }
+  .booking-step-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    box-shadow: 0 0 0 4px rgba(245, 245, 245, 0.9);
+  }
+  .booking-header-left h2 {
+    font-size: 18px;
+  }
+}
+
 /* ==================== SUCCESS MODAL ==================== */
 .success-modal-overlay {
   position: fixed;
