@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -14,7 +15,20 @@ const clientLoginUrl = import.meta.env.VITE_CLIENT_LOGIN_URL || 'http://localhos
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showLoginLoader, setShowLoginLoader] = useState(false);
   const location = useLocation();
+
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    if (mobileOpen) setMobileOpen(false);
+    setShowLoginLoader(true);
+  };
+
+  const handleLoaderDone = () => {
+    setShowLoginLoader(false);
+    // Navigate directly on the same tab
+    window.location.href = clientLoginUrl;
+  };
 
   return (
     <nav className="navbar">
@@ -47,7 +61,7 @@ export default function Navbar() {
         </div>
 
         {/* Login */}
-        <a className="btn-login" href={clientLoginUrl}>
+        <a className="btn-login" href={clientLoginUrl} onClick={handleLoginClick}>
           LOGIN
         </a>
 
@@ -77,12 +91,15 @@ export default function Navbar() {
           <a
             className="btn-login"
             href={clientLoginUrl}
-            onClick={() => setMobileOpen(false)}
+            onClick={handleLoginClick}
           >
             LOGIN
           </a>
         </div>
       )}
+
+      {/* Login Intercept Loading Screen */}
+      {showLoginLoader && <LoadingScreen onDone={handleLoaderDone} />}
     </nav>
   );
 }
