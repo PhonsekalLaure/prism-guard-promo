@@ -128,11 +128,6 @@ export default function Globe({ mouseRef }) {
         </mesh>
       </group>
 
-      {/* Atmospheric haze — teal tint */}
-      <mesh>
-        <sphereGeometry args={[1.65, 32, 32]} />
-        <meshBasicMaterial color="#0a3040" transparent opacity={0.08} side={THREE.BackSide} />
-      </mesh>
 
       {/* Orbiting rings — each on a fixed, pre-tilted axis */}
       <group rotation={[0.4, 0, 0]} ref={ring1Ref}>

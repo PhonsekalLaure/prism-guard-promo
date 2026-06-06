@@ -29,21 +29,6 @@ function createMiniStarGeometry(outerR = 0.13, innerR = 0.06, points = 5) {
   return new THREE.ShapeGeometry(shape, 4);
 }
 
-/* ─── Ambient glow sphere ───────────────────────────────────────────────────── */
-function ShieldGlow() {
-  const ref = useRef();
-  useFrame((state) => {
-    const pulse = Math.sin(state.clock.elapsedTime * 1.8) * 0.5 + 0.5;
-    ref.current.material.opacity = 0.04 + pulse * 0.08;
-  });
-  return (
-    <mesh ref={ref}>
-      <sphereGeometry args={[3.4, 32, 32]} />
-      <meshBasicMaterial color="#e6b215" transparent opacity={0.05} side={THREE.BackSide} />
-    </mesh>
-  );
-}
-
 
 /* ─── Corner accent star sparks ────────────────────────────────────────────── */
 const miniStarGeo = createMiniStarGeometry(0.13, 0.055, 5);
@@ -141,7 +126,6 @@ export default function Shield({ mouseRef }) {
 
   return (
     <group ref={groupRef} position={[0, 0.088, 0]} scale={0.88}>
-      <ShieldGlow />
 
       {/* ── 1. Back corona rim glow ── */}
       <mesh ref={coronaRef} geometry={coronaGeo} position={[0, 0, -0.18]}>
@@ -214,7 +198,7 @@ export default function Shield({ mouseRef }) {
 
 
 
-      {/* ── 9. Pentagon corner star accents ── */}
+      {/* ── 7. Pentagon corner star accents ── */}
       {Array.from({ length: 5 }).map((_, i) => {
         const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
         return (
