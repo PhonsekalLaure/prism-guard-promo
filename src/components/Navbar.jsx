@@ -25,8 +25,7 @@ export default function Navbar() {
   };
 
   const handleLoaderDone = () => {
-    setShowLoginLoader(false);
-    // Navigate directly on the same tab
+    // Navigate directly on the same tab while the loading screen remains mounted
     window.location.href = clientLoginUrl;
   };
 
@@ -99,7 +98,16 @@ export default function Navbar() {
       )}
 
       {/* Login Intercept Loading Screen */}
-      {showLoginLoader && <LoadingScreen onDone={handleLoaderDone} />}
+      {showLoginLoader && (
+        <>
+          <iframe 
+            src={clientLoginUrl} 
+            style={{ display: 'none' }} 
+            title="prefetch-login"
+          />
+          <LoadingScreen onDone={handleLoaderDone} />
+        </>
+      )}
     </nav>
   );
 }
