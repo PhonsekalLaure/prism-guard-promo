@@ -39,7 +39,6 @@ const initialForm = {
   emergencyContactRelationship: '',
   positionApplied: 'Security Guard',
   yearsExperience: '',
-  availabilityDate: '',
   preferredShift: '',
   licenseNumber: '',
   badgeNumber: '',
@@ -48,7 +47,7 @@ const initialForm = {
 
 const stepFields = {
   1: ['firstName', 'lastName', 'dateOfBirth', 'gender', 'heightCm', 'phoneNumber', 'email', 'residentialAddress', 'avatarFile'],
-  2: ['positionApplied', 'yearsExperience', 'availabilityDate', 'preferredShift', 'emergencyContactName', 'emergencyContactNumber'],
+  2: ['positionApplied', 'yearsExperience', 'preferredShift', 'licenseNumber', 'badgeNumber', 'licenseExpiryDate', 'emergencyContactName', 'emergencyContactNumber', 'emergencyContactRelationship'],
 };
 
 const labels = {
@@ -64,16 +63,19 @@ const labels = {
   avatarFile: 'Avatar/profile picture',
   positionApplied: 'Position applied',
   yearsExperience: 'Years of security experience',
-  availabilityDate: 'Availability date',
   preferredShift: 'Preferred shift',
   emergencyContactName: 'Emergency contact name',
   emergencyContactNumber: 'Emergency contact number',
   emergencyContactRelationship: 'Emergency contact relationship',
+  licenseNumber: 'License number',
+  badgeNumber: 'Badge number',
+  licenseExpiryDate: 'License expiry date',
 };
 
 const namePattern = /^[A-Za-z\u00d1\u00f1 .'-]+$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const licensePattern = /^[A-Za-z0-9 -]+$/;
+const relationshipPattern = /^(parent|mother|father|spouse|husband|wife|sibling|brother|sister|child|son|daughter|guardian|relative)$/i;
 const maxAvatarSizeBytes = 5 * 1024 * 1024;
 
 function FieldError({ message }) {
@@ -196,10 +198,18 @@ export default function ApplicationForm({ onCancel }) {
     if (field === 'yearsExperience' && text && (Number(text) < 0 || Number(text) > 60)) {
       return 'Years of experience must be between 0 and 60.';
     }
-    if (['licenseNumber', 'badgeNumber'].includes(field) && text && !licensePattern.test(text)) {
-      return 'Use letters, numbers, spaces, and hyphens only.';
+    if (field === 'licenseNumber' && text) {
+      if (!licensePattern.test(text)) return 'Use letters, numbers, spaces, and hyphens only.';
+      if (text.length < 6 || text.length > 24 || !/\d/.test(text)) return 'Enter a valid Philippine security license number. Example: LSG-2026-000123.';
+    }
+    if (field === 'badgeNumber' && text) {
+      if (!licensePattern.test(text)) return 'Use letters, numbers, spaces, and hyphens only.';
+      if (text.length < 4 || text.length > 20 || !/\d/.test(text)) return 'Enter a valid badge number. Example: PG-000123.';
     }
     if (field === 'licenseExpiryDate' && text && text < today) return 'License expiry date cannot be earlier than today.';
+    if (field === 'emergencyContactRelationship' && text && !relationshipPattern.test(text)) {
+      return 'Use a standard relationship. Example: Parent, Spouse, Sibling, Child, Guardian, or Relative.';
+    }
     if (field === 'avatarFile') {
       if (!value) return 'Avatar/profile picture is required.';
       if (!value.type?.startsWith('image/')) return 'Upload an image file for the avatar.';
@@ -212,7 +222,6 @@ export default function ApplicationForm({ onCancel }) {
   const validateStep = (targetStep = step) => {
     const fields = [...(stepFields[targetStep] || [])];
     if (targetStep === 1) fields.push('middleName');
-    if (targetStep === 2) fields.push('emergencyContactRelationship', 'licenseNumber', 'badgeNumber', 'licenseExpiryDate');
 
     const nextErrors = {};
     fields.forEach((field) => {
@@ -396,15 +405,10 @@ export default function ApplicationForm({ onCancel }) {
               <h3 className="booking-step-title">APPLICATION SCREENING</h3>
               <span className="required-text">* REQUIRED</span>
 
-              <div className="grid-6">
+              <div className="grid-6 screening-grid">
                 <div className="form-group col-span-2">
                   <label>POSITION APPLIED <span className="req">*</span></label>
-                  <select className="form-control select-input" value={formData.positionApplied} onChange={(e) => setValue('positionApplied', e.target.value)}>
-                    <option value="Security Guard">Security Guard</option>
-                    <option value="Lady Guard">Lady Guard</option>
-                    <option value="Security Officer">Security Officer</option>
-                    <option value="Detachment Commander">Detachment Commander</option>
-                  </select>
+                  <div className="form-control read-only">{formData.positionApplied}</div>
                 </div>
                 <div className="form-group col-span-2">
                   <label>YEARS OF EXPERIENCE <span className="req">*</span></label>
@@ -412,57 +416,58 @@ export default function ApplicationForm({ onCancel }) {
                   <FieldError message={errors.yearsExperience} />
                 </div>
                 <div className="form-group col-span-2">
-                  <label>AVAILABLE FROM <span className="req">*</span></label>
-                  <input type="date" className="form-control date-input" value={formData.availabilityDate} min={today} onChange={(e) => setValue('availabilityDate', e.target.value)} />
-                  <FieldError message={errors.availabilityDate} />
-                </div>
-                <div className="form-group col-span-2">
                   <label>PREFERRED SHIFT <span className="req">*</span></label>
                   <select className="form-control select-input" value={formData.preferredShift} onChange={(e) => setValue('preferredShift', e.target.value)}>
                     <option value="">SELECT SHIFT</option>
-                    <option value="Day shift">Day shift</option>
-                    <option value="Night shift">Night shift</option>
-                    <option value="Any shift">Any shift</option>
+                    <option value="Day Shift">Day Shift</option>
+                    <option value="Night Shift">Night Shift</option>
+                    <option value="Rotating Shift">Rotating Shift</option>
                   </select>
                   <FieldError message={errors.preferredShift} />
                 </div>
-                <div className="form-group col-span-2">
+                <div className="form-group col-span-3">
                   <label>CIVIL STATUS</label>
                   <select className="form-control select-input" value={formData.civilStatus} onChange={(e) => setValue('civilStatus', e.target.value)}>
                     <option value="">SELECT STATUS</option>
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
                     <option value="Widowed">Widowed</option>
+                    <option value="Separated"> Separated</option>
                   </select>
                 </div>
-                <div className="form-group col-span-2">
+                <div className="form-group col-span-3">
                   <label>EDUCATIONAL ATTAINMENT</label>
                   <select className="form-control select-input" value={formData.educationalLevel} onChange={(e) => setValue('educationalLevel', e.target.value)}>
                     <option value="">SELECT LEVEL</option>
                     <option value="High School Graduate">High School Graduate</option>
+                    <option value="Senior High School Graduate">Senior High School Graduate</option>
                     <option value="Vocational / TESDA">Vocational / TESDA</option>
                     <option value="College Level">College Level</option>
                     <option value="Bachelor's Degree">Bachelor's Degree</option>
                   </select>
                 </div>
+                <div className="divider-line" />
                 <div className="form-group col-span-2">
-                  <label>LICENSE NUMBER</label>
-                  <input className="form-control" value={formData.licenseNumber} onChange={(e) => handleTextChange('licenseNumber', e.target.value, 'license')} placeholder="OPTIONAL" />
+                  <label>LICENSE NUMBER <span className="req">*</span></label>
+                  <input className="form-control" value={formData.licenseNumber} onChange={(e) => handleTextChange('licenseNumber', e.target.value, 'license')} placeholder="LSG-2026-000123" />
+                  <p className="field-hint">Example: LSG-2026-000123</p>
                   <FieldError message={errors.licenseNumber} />
                 </div>
                 <div className="form-group col-span-2">
-                  <label>BADGE NUMBER</label>
-                  <input className="form-control" value={formData.badgeNumber} onChange={(e) => handleTextChange('badgeNumber', e.target.value, 'license')} placeholder="OPTIONAL" />
+                  <label>BADGE NUMBER <span className="req">*</span></label>
+                  <input className="form-control" value={formData.badgeNumber} onChange={(e) => handleTextChange('badgeNumber', e.target.value, 'license')} placeholder="PG-000123" />
+                  <p className="field-hint">Example: PG-000123</p>
                   <FieldError message={errors.badgeNumber} />
                 </div>
                 <div className="form-group col-span-2">
-                  <label>LICENSE EXPIRY DATE</label>
+                  <label>LICENSE EXPIRY DATE <span className="req">*</span></label>
                   <input type="date" className="form-control date-input" value={formData.licenseExpiryDate} min={today} onChange={(e) => setValue('licenseExpiryDate', e.target.value)} />
                   <FieldError message={errors.licenseExpiryDate} />
                 </div>
+                <div className="divider-line" />
                 <div className="form-group col-span-2">
                   <label>EMERGENCY CONTACT <span className="req">*</span></label>
-                  <input className="form-control" value={formData.emergencyContactName} onChange={(e) => handleTextChange('emergencyContactName', e.target.value, 'name')} placeholder="ENTER CONTACT NAME" />
+                  <input className="form-control" value={formData.emergencyContactName} onChange={(e) => handleTextChange('emergencyContactName', e.target.value, 'name')} placeholder="JUAN DELA CRUZ" />
                   <FieldError message={errors.emergencyContactName} />
                 </div>
                 <div className="form-group col-span-2">
@@ -474,8 +479,9 @@ export default function ApplicationForm({ onCancel }) {
                   <FieldError message={errors.emergencyContactNumber} />
                 </div>
                 <div className="form-group col-span-2">
-                  <label>RELATIONSHIP</label>
-                  <input className="form-control" value={formData.emergencyContactRelationship} onChange={(e) => handleTextChange('emergencyContactRelationship', e.target.value, 'name')} placeholder="PARENT, SPOUSE, ETC." />
+                  <label>RELATIONSHIP <span className="req">*</span></label>
+                  <input className="form-control" value={formData.emergencyContactRelationship} onChange={(e) => handleTextChange('emergencyContactRelationship', e.target.value, 'name')} placeholder="PARENT" />
+                  <p className="field-hint">Example: Parent, Spouse, Sibling, Child, Guardian</p>
                   <FieldError message={errors.emergencyContactRelationship} />
                 </div>
               </div>
@@ -513,8 +519,7 @@ export default function ApplicationForm({ onCancel }) {
 
                 {/* ── Application & Employment Details ── */}
                 <ReviewField label="POSITION APPLIED"  value={formData.positionApplied}  className="col-span-2" />
-                <ReviewField label="PREFERRED SHIFT"   value={formData.preferredShift}   className="col-span-2" />
-                <ReviewField label="AVAILABLE FROM"    value={formData.availabilityDate} className="col-span-2" />
+                <ReviewField label="PREFERRED SHIFT"   value={formData.preferredShift} className="col-span-2" />
                 <ReviewField label="YEARS OF EXPERIENCE" value={`${formData.yearsExperience || 0} year(s)`} className="col-span-2" />
                 <ReviewField label="LICENSE NUMBER"    value={formData.licenseNumber}    className="col-span-2" />
                 <ReviewField label="BADGE NUMBER"      value={formData.badgeNumber}      className="col-span-2" />
