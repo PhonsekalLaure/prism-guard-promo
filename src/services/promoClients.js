@@ -11,6 +11,11 @@ export async function getPromoClients() {
     : (Array.isArray(data?.clients) ? data.clients : []);
 }
 
+export async function getPromoCarouselSlides() {
+  const { data } = await axios.get(`${API_BASE}/api/promo/carousel`);
+  return Array.isArray(data?.data) ? data.data : [];
+}
+
 export async function getPromoServiceReviews(limit = 12) {
   const { data } = await axios.get(`${API_BASE}/api/promo/service-reviews`, {
     params: { limit },
