@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { ShieldHalf, CheckCircle, UploadCloud } from 'lucide-react';
 import GoogleAddressAutofill from '@components/join/GoogleAddressAutofill';
 import { submitApplicationRequest } from '@/services/promoClients';
+import {
+  getApplicantAgeError,
+  getApplicantHeightError,
+} from '../../utils/guardEligibility';
 
 function getTodayIsoDate() {
   const now = new Date();
@@ -71,15 +75,6 @@ const namePattern = /^[A-Za-z\u00d1\u00f1 .'-]+$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const licensePattern = /^[A-Za-z0-9 -]+$/;
 const maxAvatarSizeBytes = 5 * 1024 * 1024;
-
-function calculateAge(dateValue) {
-  const birthday = new Date(dateValue);
-  const now = new Date();
-  let age = now.getFullYear() - birthday.getFullYear();
-  const monthDiff = now.getMonth() - birthday.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthday.getDate())) age -= 1;
-  return age;
-}
 
 function FieldError({ message }) {
   return message ? <p className="field-error">{message}</p> : null;
@@ -185,7 +180,7 @@ export default function ApplicationForm({ onCancel }) {
 
     if (field === 'dateOfBirth' && text) {
       if (text > today) return 'Date of birth cannot be in the future.';
-      if (calculateAge(text) < 18) return 'Applicant must be at least 18 years old.';
+      return getApplicantAgeError(text);
     }
 
     if (field === 'email' && text && !emailPattern.test(text)) return 'Enter a valid email address.';
@@ -195,8 +190,8 @@ export default function ApplicationForm({ onCancel }) {
     if (field === 'residentialAddress' && text && (formData.latitude == null || formData.longitude == null)) {
       return 'Select a validated address from the suggestions.';
     }
-    if (field === 'heightCm' && text && (Number(text) < 120 || Number(text) > 230)) {
-      return 'Height must be between 120 and 230 cm.';
+    if (field === 'heightCm' && text) {
+      return getApplicantHeightError(formData.gender, text);
     }
     if (field === 'yearsExperience' && text && (Number(text) < 0 || Number(text) > 60)) {
       return 'Years of experience must be between 0 and 60.';
