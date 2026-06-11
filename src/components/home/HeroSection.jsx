@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import hero1 from '../../assets/hero1.jpg';
 import hero2 from '../../assets/hero2.jpg';
-import { getPromoCarouselSlides } from '../../services/promoClients';
+import { getPromoCarouselConfig } from '../../services/promoClients';
 import {
   normalizePromoCarouselSlides,
   removeFailedPromoSlide,
@@ -41,8 +41,9 @@ export default function HeroSection() {
   useEffect(() => {
     let cancelled = false;
 
-    getPromoCarouselSlides()
-      .then(async (items) => {
+    getPromoCarouselConfig()
+      .then(async ({ slides: items, useDefaultHero }) => {
+        if (useDefaultHero) return;
         const candidates = normalizePromoCarouselSlides(items);
         const checks = await Promise.all(candidates.map((slide) => preloadImage(slide.image_url)));
         const validSlides = candidates.filter((_, index) => checks[index]);

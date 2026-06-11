@@ -12,8 +12,16 @@ export async function getPromoClients() {
 }
 
 export async function getPromoCarouselSlides() {
+  const config = await getPromoCarouselConfig();
+  return config.slides;
+}
+
+export async function getPromoCarouselConfig() {
   const { data } = await axios.get(`${API_BASE}/api/promo/carousel`);
-  return Array.isArray(data?.data) ? data.data : [];
+  return {
+    slides: Array.isArray(data?.data) ? data.data : [],
+    useDefaultHero: Boolean(data?.use_default_hero),
+  };
 }
 
 export async function getPromoServiceReviews(limit = 12) {
