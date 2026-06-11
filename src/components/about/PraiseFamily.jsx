@@ -1,25 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
+import { Shield, Crosshair, Briefcase } from 'lucide-react';
 
-const teamMembers = [
+const executiveCore = [
   {
-    name: 'LT. COL. WILLY H. STA. ROMANA',
-    role: 'President & General Manager',
-    desc: 'AFP (CHS), founder of Praise Security. Over two decades of military and security leadership experience.',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop',
-    tag: 'FOUNDER',
+    name: 'EXECUTIVE COMMAND',
+    role: 'Strategic Direction & General Management',
+    desc: 'Founded on over two decades of military and security leadership experience. The executive command drives the overarching vision and uncompromising standards of Praise Security.',
+    icon: Shield,
+    tag: 'LEADERSHIP',
   },
   {
-    name: 'OPERATIONS DIRECTOR',
-    role: 'Chief of Operations',
-    desc: 'Oversees all field deployments and ensures tactical readiness across all client sites nationwide.',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop',
+    name: 'OPERATIONS COMMAND',
+    role: 'Tactical Oversight & Field Deployment',
+    desc: 'Ensures absolute tactical readiness across all client sites nationwide. This division oversees rapid response execution, personnel deployment, and site security architecture.',
+    icon: Crosshair,
     tag: 'OPERATIONS',
   },
   {
-    name: 'ADMIN DIRECTOR',
-    role: 'Head of Administration',
-    desc: 'Manages personnel training, compliance, and the day-to-day administrative operations of the agency.',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop',
+    name: 'ADMINISTRATIVE HUB',
+    role: 'Compliance & Personnel Development',
+    desc: 'The backbone of our agency, managing rigorous operational auditing, continuous personnel training, and strict adherence to regulatory compliance.',
+    icon: Briefcase,
     tag: 'ADMINISTRATION',
   },
 ];
@@ -50,38 +51,86 @@ export default function PraiseFamily() {
             transition: 'all 0.7s ease',
           }}
         >
-          <h2>PRAISE FAMILY</h2>
+          <h2>THE EXECUTIVE CORE</h2>
           <div className="section-title-underline" />
           <p className="section-subtitle" style={{ color: 'rgba(255,255,255,0.45)' }}>
-            The leadership behind every deployment.
+            The leadership structure behind every deployment.
           </p>
         </div>
 
         <div className="family-grid">
-          {teamMembers.map((member, i) => (
-            <div
-              key={member.name}
-              className="family-card"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(36px)',
-                transition: `all 0.6s ease ${0.2 + i * 0.15}s`,
-              }}
-            >
-              <div className="family-image-wrap">
-                <div className="family-image">
-                  <img src={member.image} alt={member.name} />
-                  <div className="family-image-overlay" />
+          {executiveCore.map((member, i) => {
+            const Icon = member.icon;
+            return (
+              <div
+                key={member.name}
+                className="family-card"
+                style={{
+                  opacity: visible ? 1 : 0,
+                  transform: visible ? 'translateY(0)' : 'translateY(36px)',
+                  transition: `all 0.6s ease ${0.2 + i * 0.15}s`,
+                  padding: '40px 36px',
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '32px'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '56px',
+                    height: '56px',
+                    background: 'rgba(230,178,21,0.1)',
+                    border: '1px solid rgba(230,178,21,0.2)',
+                    borderRadius: '4px',
+                    color: 'var(--gold)',
+                    boxShadow: '0 0 16px rgba(230,178,21,0.1)'
+                  }}>
+                    <Icon size={28} />
+                  </div>
+                  <span style={{
+                    fontFamily: 'var(--font-tech)',
+                    fontSize: '10px',
+                    letterSpacing: '2px',
+                    color: 'var(--navy-dark)',
+                    background: 'var(--gold)',
+                    padding: '4px 10px',
+                    borderRadius: '2px',
+                    fontWeight: 700,
+                  }}>
+                    {member.tag}
+                  </span>
                 </div>
-                <span className="family-tag">{member.tag}</span>
+                
+                <div className="family-name" style={{ fontSize: '18px', marginBottom: '8px' }}>
+                  {member.name}
+                </div>
+                <div className="family-role" style={{ fontSize: '11px', marginBottom: '20px', color: 'rgba(230,178,21,0.8)' }}>
+                  {member.role}
+                </div>
+                <p className="family-desc" style={{ margin: 0 }}>
+                  {member.desc}
+                </p>
+                
+                {/* Decorative accent */}
+                <div style={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  width: '100%',
+                  height: '3px',
+                  background: 'linear-gradient(90deg, var(--gold), rgba(230,178,21,0.3))',
+                }} />
               </div>
-              <div className="family-info">
-                <div className="family-name">{member.name}</div>
-                <div className="family-role">{member.role}</div>
-                <p className="family-desc">{member.desc}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
