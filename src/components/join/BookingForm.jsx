@@ -209,6 +209,17 @@ export default function BookingForm({ onCancel }) {
                 {errors.companyName && <span className="field-error">{errors.companyName}</span>}
               </div>
               <div className="form-group">
+                <label>EMAIL ADDRESS <span className="req">*</span></label>
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="ENTER EMAIL ADDRESS"
+                  value={formData.email}
+                  onChange={(event) => updateField('email', event.target.value)}
+                />
+                {errors.email && <span className="field-error">{errors.email}</span>}
+              </div>
+              <div className="form-group">
                 <label>REPRESENTATIVE FIRST NAME <span className="req">*</span></label>
                 <input
                   type="text"
@@ -219,6 +230,7 @@ export default function BookingForm({ onCancel }) {
                 />
                 {errors.firstName && <span className="field-error">{errors.firstName}</span>}
               </div>
+
               <div className="form-group">
                 <label>REPRESENTATIVE LAST NAME <span className="req">*</span></label>
                 <input
@@ -229,18 +241,6 @@ export default function BookingForm({ onCancel }) {
                   onChange={(event) => updateField('lastName', event.target.value)}
                 />
                 {errors.lastName && <span className="field-error">{errors.lastName}</span>}
-              </div>
-
-              <div className="form-group">
-                <label>EMAIL ADDRESS <span className="req">*</span></label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="ENTER EMAIL ADDRESS"
-                  value={formData.email}
-                  onChange={(event) => updateField('email', event.target.value)}
-                />
-                {errors.email && <span className="field-error">{errors.email}</span>}
               </div>
 
               <div className="form-group">
@@ -363,9 +363,14 @@ export default function BookingForm({ onCancel }) {
 
             <div className="booking-form-grid confirmation-grid">
               {/* Company — full width */}
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+              <div className="form-group confirmation-full">
                 <label>COMPANY NAME</label>
                 <div className="form-control read-only">{formData.companyName}</div>
+              </div>
+
+              <div className="form-group confirmation-full">
+                <label>EMAIL ADDRESS</label>
+                <div className="form-control read-only">{formData.email}</div>
               </div>
 
               {/* Representative names */}
@@ -380,10 +385,6 @@ export default function BookingForm({ onCancel }) {
 
               {/* Contact info */}
               <div className="form-group">
-                <label>EMAIL ADDRESS</label>
-                <div className="form-control read-only">{formData.email}</div>
-              </div>
-              <div className="form-group">
                 <label>MOBILE NUMBER</label>
                 <div className="form-control read-only">{formData.mobile ? `+63 ${formData.mobile}` : ''}</div>
               </div>
@@ -393,7 +394,9 @@ export default function BookingForm({ onCancel }) {
               </div>
 
               {/* Purpose — full width */}
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+              <div className="confirmation-divider" aria-hidden="true"></div>
+
+              <div className="form-group confirmation-full">
                 <label>PURPOSE OF APPOINTMENT</label>
                 <div className="form-control read-only">{selectedPurposes}</div>
               </div>
@@ -409,7 +412,7 @@ export default function BookingForm({ onCancel }) {
               </div>
 
               {/* Notes — full width */}
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+              <div className="form-group confirmation-full">
                 <label>ADDITIONAL NOTES FOR APPOINTMENT</label>
                 <div className="form-control read-only textarea-readonly">{formData.notes || 'NONE'}</div>
               </div>

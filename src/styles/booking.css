@@ -402,6 +402,17 @@ select.select-input {
   flex-direction: column;
 }
 
+.confirmation-full,
+.confirmation-divider {
+  grid-column: 1 / -1;
+}
+
+.confirmation-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(230, 178, 21, 0.65) 18%, rgba(230, 178, 21, 0.85) 50%, rgba(230, 178, 21, 0.65) 82%, transparent 100%);
+}
+
 /* Readonly overrides */
 .form-control.read-only {
   color: rgba(255, 255, 255, 0.6);
