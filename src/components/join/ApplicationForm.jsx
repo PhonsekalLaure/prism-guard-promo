@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ShieldHalf, CheckCircle, UploadCloud } from 'lucide-react';
 import GoogleAddressAutofill from '@components/join/GoogleAddressAutofill';
 import { submitApplicationRequest } from '@/services/promoClients';
@@ -34,12 +34,11 @@ const initialForm = {
   longitude: null,
   avatarFile: null,
   avatarPreview: '',
-  emergencyContactName: '',
-  emergencyContactNumber: '',
-  emergencyContactRelationship: '',
+  licensePhotoFile: null,
+  licensePhotoPreview: '',
   positionApplied: 'Security Guard',
+  employmentType: 'Regular',
   yearsExperience: '',
-  preferredShift: '',
   licenseNumber: '',
   badgeNumber: '',
   licenseExpiryDate: '',
@@ -47,13 +46,14 @@ const initialForm = {
 
 const stepFields = {
   1: ['firstName', 'lastName', 'dateOfBirth', 'gender', 'heightCm', 'phoneNumber', 'email', 'residentialAddress', 'avatarFile'],
-  2: ['positionApplied', 'yearsExperience', 'preferredShift', 'licenseNumber', 'badgeNumber', 'licenseExpiryDate', 'emergencyContactName', 'emergencyContactNumber', 'emergencyContactRelationship'],
+  2: ['positionApplied', 'employmentType', 'yearsExperience', 'licenseNumber', 'badgeNumber', 'licenseExpiryDate', 'licensePhotoFile'],
 };
 
 const labels = {
   firstName: 'First name',
   middleName: 'Middle name',
   lastName: 'Last name',
+  suffix: 'Suffix',
   dateOfBirth: 'Date of birth',
   gender: 'Gender',
   heightCm: 'Height',
@@ -61,12 +61,10 @@ const labels = {
   email: 'Email address',
   residentialAddress: 'Residential address',
   avatarFile: 'Avatar/profile picture',
+  licensePhotoFile: 'Security license photo',
   positionApplied: 'Position applied',
+  employmentType: 'Employment type',
   yearsExperience: 'Years of security experience',
-  preferredShift: 'Preferred shift',
-  emergencyContactName: 'Emergency contact name',
-  emergencyContactNumber: 'Emergency contact number',
-  emergencyContactRelationship: 'Emergency contact relationship',
   licenseNumber: 'License number',
   badgeNumber: 'Badge number',
   licenseExpiryDate: 'License expiry date',
@@ -75,8 +73,7 @@ const labels = {
 const namePattern = /^[A-Za-z\u00d1\u00f1 .'-]+$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const licensePattern = /^[A-Za-z0-9 -]+$/;
-const relationshipPattern = /^(parent|mother|father|spouse|husband|wife|sibling|brother|sister|child|son|daughter|guardian|relative)$/i;
-const maxAvatarSizeBytes = 5 * 1024 * 1024;
+const maxImageUploadSizeBytes = 5 * 1024 * 1024;
 
 function FieldError({ message }) {
   return message ? <p className="field-error">{message}</p> : null;
@@ -91,6 +88,23 @@ function ReviewField({ label, value, className = '' }) {
   );
 }
 
+function ReviewImageField({ label, src, fileName, className = '' }) {
+  return (
+    <div className={`form-group ${className}`}>
+      <label>{label}</label>
+      <div className="review-image-field">
+        <span className="review-avatar-preview">
+          {src ? <img src={src} alt={`${label} preview`} /> : <UploadCloud size={24} />}
+        </span>
+        <span className="review-image-copy">
+          <strong>{fileName || 'N/A'}</strong>
+          <small>Profile picture preview</small>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function ApplicationForm({ onCancel }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState(initialForm);
@@ -98,10 +112,13 @@ export default function ApplicationForm({ onCancel }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const previewUrlsRef = useRef({ avatarPreview: '', licensePhotoPreview: '' });
 
   useEffect(() => () => {
-    if (formData.avatarPreview) URL.revokeObjectURL(formData.avatarPreview);
-  }, [formData.avatarPreview]);
+    Object.values(previewUrlsRef.current).forEach((previewUrl) => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    });
+  }, []);
 
   const setValue = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -124,8 +141,6 @@ export default function ApplicationForm({ onCancel }) {
   };
 
   const handleAddressChange = (value) => {
-    if (formData.avatarPreview) URL.revokeObjectURL(formData.avatarPreview);
-
     setFormData((prev) => ({
       ...prev,
       residentialAddress: value,
@@ -140,43 +155,65 @@ export default function ApplicationForm({ onCancel }) {
     });
   };
 
-  const handleAvatarChange = (file) => {
+  const handleImageUploadChange = ({ fileField, previewField, errorField, label }, file) => {
+    if (previewUrlsRef.current[previewField]) {
+      URL.revokeObjectURL(previewUrlsRef.current[previewField]);
+      previewUrlsRef.current[previewField] = '';
+    }
+
     if (!file) {
-      setFormData((prev) => ({ ...prev, avatarFile: null, avatarPreview: '' }));
+      setFormData((prev) => ({ ...prev, [fileField]: null, [previewField]: '' }));
       return;
     }
 
     const nextErrors = {};
     if (!file.type.startsWith('image/')) {
-      nextErrors.avatarFile = 'Upload an image file for the avatar.';
-    } else if (file.size > maxAvatarSizeBytes) {
-      nextErrors.avatarFile = 'Avatar must be 5 MB or smaller.';
+      nextErrors[errorField] = `${label} must be an image file.`;
+    } else if (file.size > maxImageUploadSizeBytes) {
+      nextErrors[errorField] = `${label} must be 5 MB or smaller.`;
     }
 
-    if (nextErrors.avatarFile) {
+    if (nextErrors[errorField]) {
       setErrors((prev) => ({ ...prev, ...nextErrors }));
-      setFormData((prev) => ({ ...prev, avatarFile: null, avatarPreview: '' }));
+      setFormData((prev) => ({ ...prev, [fileField]: null, [previewField]: '' }));
       return;
     }
 
+    const previewUrl = URL.createObjectURL(file);
+    previewUrlsRef.current[previewField] = previewUrl;
+
     setFormData((prev) => ({
       ...prev,
-      avatarFile: file,
-      avatarPreview: URL.createObjectURL(file),
+      [fileField]: file,
+      [previewField]: previewUrl,
     }));
     setErrors((prev) => {
       const next = { ...prev };
-      delete next.avatarFile;
+      delete next[errorField];
       return next;
     });
     setSubmitError('');
   };
 
+  const handleAvatarChange = (file) => handleImageUploadChange({
+    fileField: 'avatarFile',
+    previewField: 'avatarPreview',
+    errorField: 'avatarFile',
+    label: 'Avatar/profile picture',
+  }, file);
+
+  const handleLicensePhotoChange = (file) => handleImageUploadChange({
+    fileField: 'licensePhotoFile',
+    previewField: 'licensePhotoPreview',
+    errorField: 'licensePhotoFile',
+    label: 'Security license photo',
+  }, file);
+
   const validateField = (field, value, targetStep = step) => {
     const text = typeof value === 'string' ? value.trim() : value;
     if (stepFields[targetStep]?.includes(field) && !text) return `${labels[field]} is required.`;
 
-    if (['firstName', 'middleName', 'lastName', 'emergencyContactName', 'emergencyContactRelationship'].includes(field) && text && !namePattern.test(text)) {
+    if (['firstName', 'middleName', 'lastName'].includes(field) && text && !namePattern.test(text)) {
       return `${labels[field]} can only contain letters, spaces, apostrophes, periods, and hyphens.`;
     }
 
@@ -186,7 +223,7 @@ export default function ApplicationForm({ onCancel }) {
     }
 
     if (field === 'email' && text && !emailPattern.test(text)) return 'Enter a valid email address.';
-    if (['phoneNumber', 'emergencyContactNumber'].includes(field) && text && !/^9\d{9}$/.test(text)) {
+    if (field === 'phoneNumber' && text && !/^9\d{9}$/.test(text)) {
       return 'Enter a valid 10-digit Philippine mobile number starting with 9.';
     }
     if (field === 'residentialAddress' && text && (formData.latitude == null || formData.longitude == null)) {
@@ -207,13 +244,11 @@ export default function ApplicationForm({ onCancel }) {
       if (text.length < 4 || text.length > 20 || !/\d/.test(text)) return 'Enter a valid badge number. Example: PG-000123.';
     }
     if (field === 'licenseExpiryDate' && text && text < today) return 'License expiry date cannot be earlier than today.';
-    if (field === 'emergencyContactRelationship' && text && !relationshipPattern.test(text)) {
-      return 'Use a standard relationship. Example: Parent, Spouse, Sibling, Child, Guardian, or Relative.';
-    }
-    if (field === 'avatarFile') {
-      if (!value) return 'Avatar/profile picture is required.';
-      if (!value.type?.startsWith('image/')) return 'Upload an image file for the avatar.';
-      if (value.size > maxAvatarSizeBytes) return 'Avatar must be 5 MB or smaller.';
+    if (['avatarFile', 'licensePhotoFile'].includes(field)) {
+      const label = labels[field];
+      if (!value) return `${label} is required.`;
+      if (!value.type?.startsWith('image/')) return `${label} must be an image file.`;
+      if (value.size > maxImageUploadSizeBytes) return `${label} must be 5 MB or smaller.`;
     }
 
     return '';
@@ -248,11 +283,14 @@ export default function ApplicationForm({ onCancel }) {
       ...formData,
       citizenship: 'Filipino',
       phoneNumber: formData.phoneNumber ? `+63${formData.phoneNumber}` : '',
-      emergencyContactNumber: formData.emergencyContactNumber ? `+63${formData.emergencyContactNumber}` : '',
     }).forEach(([key, value]) => {
-      if (key === 'avatarPreview') return;
+      if (['avatarPreview', 'licensePhotoPreview'].includes(key)) return;
       if (key === 'avatarFile') {
         payload.append('avatar', value);
+        return;
+      }
+      if (key === 'licensePhotoFile') {
+        payload.append('licensePhoto', value);
         return;
       }
       payload.append(key, value ?? '');
@@ -315,10 +353,15 @@ export default function ApplicationForm({ onCancel }) {
                   <input className="form-control" value={formData.lastName} onChange={(e) => handleTextChange('lastName', e.target.value, 'name')} placeholder="ENTER LAST NAME" />
                   <FieldError message={errors.lastName} />
                 </div>
-                <div className="form-group col-span-2">
+                <div className="form-group">
                   <label>MIDDLE NAME</label>
                   <input className="form-control" value={formData.middleName} onChange={(e) => handleTextChange('middleName', e.target.value, 'name')} placeholder="ENTER MIDDLE NAME" />
                   <FieldError message={errors.middleName} />
+                </div>
+                <div className="form-group">
+                  <label>SUFFIX</label>
+                  <input className="form-control" value={formData.suffix} onChange={(e) => handleTextChange('suffix', e.target.value, 'license')} placeholder="JR" />
+                  <FieldError message={errors.suffix} />
                 </div>
                 <div className="form-group col-span-2">
                   <label>DATE OF BIRTH <span className="req">*</span></label>
@@ -411,19 +454,18 @@ export default function ApplicationForm({ onCancel }) {
                   <div className="form-control read-only">{formData.positionApplied}</div>
                 </div>
                 <div className="form-group col-span-2">
+                  <label>EMPLOYMENT TYPE <span className="req">*</span></label>
+                  <select className="form-control select-input" value={formData.employmentType} onChange={(e) => setValue('employmentType', e.target.value)}>
+                    <option value="">SELECT TYPE</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Reliever">Reliever</option>
+                  </select>
+                  <FieldError message={errors.employmentType} />
+                </div>
+                <div className="form-group col-span-2">
                   <label>YEARS OF EXPERIENCE <span className="req">*</span></label>
                   <input className="form-control" inputMode="decimal" value={formData.yearsExperience} onChange={(e) => handleTextChange('yearsExperience', e.target.value, 'number')} placeholder="0" />
                   <FieldError message={errors.yearsExperience} />
-                </div>
-                <div className="form-group col-span-2">
-                  <label>PREFERRED SHIFT <span className="req">*</span></label>
-                  <select className="form-control select-input" value={formData.preferredShift} onChange={(e) => setValue('preferredShift', e.target.value)}>
-                    <option value="">SELECT SHIFT</option>
-                    <option value="Day Shift">Day Shift</option>
-                    <option value="Night Shift">Night Shift</option>
-                    <option value="Rotating Shift">Rotating Shift</option>
-                  </select>
-                  <FieldError message={errors.preferredShift} />
                 </div>
                 <div className="form-group col-span-3">
                   <label>CIVIL STATUS</label>
@@ -464,25 +506,27 @@ export default function ApplicationForm({ onCancel }) {
                   <input type="date" className="form-control date-input" value={formData.licenseExpiryDate} min={today} onChange={(e) => setValue('licenseExpiryDate', e.target.value)} />
                   <FieldError message={errors.licenseExpiryDate} />
                 </div>
-                <div className="divider-line" />
-                <div className="form-group col-span-2">
-                  <label>EMERGENCY CONTACT <span className="req">*</span></label>
-                  <input className="form-control" value={formData.emergencyContactName} onChange={(e) => handleTextChange('emergencyContactName', e.target.value, 'name')} placeholder="JUAN DELA CRUZ" />
-                  <FieldError message={errors.emergencyContactName} />
-                </div>
-                <div className="form-group col-span-2">
-                  <label>EMERGENCY NUMBER <span className="req">*</span></label>
-                  <div className="input-with-prefix">
-                    <span>+63</span>
-                    <input className="form-control" inputMode="numeric" value={formData.emergencyContactNumber} onChange={(e) => handleTextChange('emergencyContactNumber', e.target.value, 'phone')} placeholder="9123456789" />
-                  </div>
-                  <FieldError message={errors.emergencyContactNumber} />
-                </div>
-                <div className="form-group col-span-2">
-                  <label>RELATIONSHIP <span className="req">*</span></label>
-                  <input className="form-control" value={formData.emergencyContactRelationship} onChange={(e) => handleTextChange('emergencyContactRelationship', e.target.value, 'name')} placeholder="PARENT" />
-                  <p className="field-hint">Example: Parent, Spouse, Sibling, Child, Guardian</p>
-                  <FieldError message={errors.emergencyContactRelationship} />
+                <div className="form-group col-span-6">
+                  <label>SECURITY LICENSE PHOTO <span className="req">*</span></label>
+                  <label className={`avatar-upload ${formData.licensePhotoPreview ? 'has-preview' : ''}`}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => handleLicensePhotoChange(event.target.files?.[0])}
+                    />
+                    <span className="avatar-upload-preview document-preview">
+                      {formData.licensePhotoPreview ? (
+                        <img src={formData.licensePhotoPreview} alt="Security license preview" />
+                      ) : (
+                        <UploadCloud size={28} />
+                      )}
+                    </span>
+                    <span className="avatar-upload-copy">
+                      <strong>{formData.licensePhotoFile?.name || 'Upload a clear photo of the security license'}</strong>
+                      <small>JPG, PNG, or WebP up to 5 MB. Use a readable front-facing license photo.</small>
+                    </span>
+                  </label>
+                  <FieldError message={errors.licensePhotoFile} />
                 </div>
               </div>
 
@@ -498,40 +542,56 @@ export default function ApplicationForm({ onCancel }) {
               <h3 className="booking-step-title">SUBMISSION CONFIRMATION</h3>
               {submitError && <div className="booking-submit-error">{submitError}</div>}
 
-              <div className="grid-6">
+              <div className="review-confirmation">
+                <ReviewImageField
+                  label="AVATAR / PROFILE PICTURE"
+                  src={formData.avatarPreview}
+                  fileName={formData.avatarFile?.name}
+                  className="review-avatar-row"
+                />
 
-                {/* ── Personal Details ── */}
-                <ReviewField label="FIRST NAME"   value={formData.firstName}   className="col-span-2" />
-                <ReviewField label="LAST NAME"    value={formData.lastName}    className="col-span-2" />
-                <ReviewField label="MIDDLE NAME"  value={formData.middleName}  className="col-span-2" />
-                <ReviewField label="SUFFIX"       value={formData.suffix}      className="col-span-2" />
-                <ReviewField label="DATE OF BIRTH" value={formData.dateOfBirth} className="col-span-2" />
-                <ReviewField label="GENDER"       value={formData.gender}      className="col-span-2" />
-                <ReviewField label="HEIGHT"       value={formData.heightCm ? `${formData.heightCm} cm` : ''} className="col-span-2" />
-                <ReviewField label="CIVIL STATUS" value={formData.civilStatus} className="col-span-2" />
-                <ReviewField label="EDUCATIONAL ATTAINMENT" value={formData.educationalLevel} className="col-span-2" />
-                <ReviewField label="MOBILE NUMBER" value={formData.phoneNumber ? `+63 ${formData.phoneNumber}` : ''} className="col-span-3" />
-                <ReviewField label="EMAIL ADDRESS" value={formData.email} className="col-span-3" />
-                <ReviewField label="RESIDENTIAL ADDRESS" value={formData.residentialAddress} className="col-span-6" />
-                <ReviewField label="AVATAR / PROFILE PICTURE" value={formData.avatarFile?.name} className="col-span-6" />
+                <div className="divider-line review-divider" />
 
-                <div className="divider-line" />
+                <div className="review-section">
+                  <div className="review-section-heading">PERSONAL DETAILS</div>
+                  <div className="grid-6 review-grid">
+                    <ReviewField label="FIRST NAME" value={formData.firstName} className="col-span-2" />
+                    <ReviewField label="LAST NAME" value={formData.lastName} className="col-span-2" />
+                    <ReviewField label="MIDDLE NAME" value={formData.middleName} />
+                    <ReviewField label="SUFFIX" value={formData.suffix} />
+                    <ReviewField label="DATE OF BIRTH" value={formData.dateOfBirth} className="col-span-2" />
+                    <ReviewField label="GENDER" value={formData.gender} className="col-span-2" />
+                    <ReviewField label="HEIGHT" value={formData.heightCm ? `${formData.heightCm} cm` : ''} className="col-span-2" />
+                    <ReviewField label="CIVIL STATUS" value={formData.civilStatus} className="col-span-3" />
+                    <ReviewField label="EDUCATIONAL ATTAINMENT" value={formData.educationalLevel} className="col-span-3" />
+                  </div>
+                </div>
 
-                {/* ── Application & Employment Details ── */}
-                <ReviewField label="POSITION APPLIED"  value={formData.positionApplied}  className="col-span-2" />
-                <ReviewField label="PREFERRED SHIFT"   value={formData.preferredShift} className="col-span-2" />
-                <ReviewField label="YEARS OF EXPERIENCE" value={`${formData.yearsExperience || 0} year(s)`} className="col-span-2" />
-                <ReviewField label="LICENSE NUMBER"    value={formData.licenseNumber}    className="col-span-2" />
-                <ReviewField label="BADGE NUMBER"      value={formData.badgeNumber}      className="col-span-2" />
-                <ReviewField label="LICENSE EXPIRY"    value={formData.licenseExpiryDate} className="col-span-2" />
+                <div className="divider-line review-divider" />
 
-                <div className="divider-line" />
+                <div className="review-section">
+                  <div className="review-section-heading">CONTACT DETAILS</div>
+                  <div className="grid-6 review-grid">
+                    <ReviewField label="MOBILE NUMBER" value={formData.phoneNumber ? `+63 ${formData.phoneNumber}` : ''} className="col-span-3" />
+                    <ReviewField label="EMAIL ADDRESS" value={formData.email} className="col-span-3" />
+                    <ReviewField label="RESIDENTIAL ADDRESS" value={formData.residentialAddress} className="col-span-6" />
+                  </div>
+                </div>
 
-                {/* ── Emergency Contact ── */}
-                <ReviewField label="EMERGENCY CONTACT" value={formData.emergencyContactName} className="col-span-2" />
-                <ReviewField label="EMERGENCY NUMBER"  value={formData.emergencyContactNumber ? `+63 ${formData.emergencyContactNumber}` : ''} className="col-span-2" />
-                <ReviewField label="RELATIONSHIP"      value={formData.emergencyContactRelationship} className="col-span-2" />
+                <div className="divider-line review-divider" />
 
+                <div className="review-section">
+                  <div className="review-section-heading">APPLICATION AND LICENSE DETAILS</div>
+                  <div className="grid-6 review-grid">
+                    <ReviewField label="POSITION APPLIED" value={formData.positionApplied} className="col-span-2" />
+                    <ReviewField label="EMPLOYMENT TYPE" value={formData.employmentType} className="col-span-2" />
+                    <ReviewField label="YEARS OF EXPERIENCE" value={`${formData.yearsExperience || 0} year(s)`} className="col-span-2" />
+                    <ReviewField label="LICENSE NUMBER" value={formData.licenseNumber} className="col-span-2" />
+                    <ReviewField label="BADGE NUMBER" value={formData.badgeNumber} className="col-span-2" />
+                    <ReviewField label="LICENSE EXPIRY" value={formData.licenseExpiryDate} className="col-span-2" />
+                    <ReviewField label="SECURITY LICENSE PHOTO" value={formData.licensePhotoFile?.name} className="col-span-6" />
+                  </div>
+                </div>
               </div>
 
               <div className="booking-actions">

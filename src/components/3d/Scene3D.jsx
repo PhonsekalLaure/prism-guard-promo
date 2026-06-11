@@ -6,7 +6,7 @@ import Prism from './models/Prism';
 import WalkieTalkie from './models/WalkieTalkie';
 import Badge from './models/Badge';
 import Radar from './models/Radar';
-import { Suspense, useRef, useCallback } from 'react';
+import { Suspense, useRef, useCallback, createElement } from 'react';
 import * as THREE from 'three';
 
 const modelMap = {
@@ -33,8 +33,7 @@ function SceneContent({ Model, mouseRef }) {
     const targetY = mouse.hovering ? basePos.current.y + mouse.y * 0.25 : basePos.current.y;
     currentX.current += (targetX - currentX.current) * lerpFactor;
     currentY.current += (targetY - currentY.current) * lerpFactor;
-    camera.position.x = currentX.current;
-    camera.position.y = currentY.current;
+    camera.position.set(currentX.current, currentY.current, basePos.current.z);
     camera.lookAt(0, 0, 0);
   });
 
@@ -42,7 +41,7 @@ function SceneContent({ Model, mouseRef }) {
     // rotationIntensity=0 — Float's random rotation fought with manual lerp causing jitter
     // Only keep the gentle vertical float bob (floatIntensity)
     <Float speed={1.2} rotationIntensity={0} floatIntensity={0.3}>
-      <Model mouseRef={mouseRef} />
+      {createElement(Model, { mouseRef })}
     </Float>
   );
 }

@@ -50,14 +50,19 @@ function CornerStar({ x, y, phaseOffset = 0 }) {
 /* ─── Logo decal on shield face ─────────────────────────────────────────────── */
 function ShieldLogo() {
   const texture = useTexture('/favicon.png');
-  texture.colorSpace = THREE.SRGBColorSpace;
+  const decalTexture = useMemo(() => {
+    const nextTexture = texture.clone();
+    nextTexture.colorSpace = THREE.SRGBColorSpace;
+    nextTexture.needsUpdate = true;
+    return nextTexture;
+  }, [texture]);
   
   return (
     <Decal
       position={[0, -0.05, 0.01]}
       rotation={[0, 0, 0]}
       scale={2.8}
-      map={texture}
+      map={decalTexture}
     />
   );
 }

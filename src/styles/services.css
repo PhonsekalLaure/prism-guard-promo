@@ -375,6 +375,20 @@
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.advantage-buttons .btn-primary,
+.advantage-buttons .btn-outline-gold {
+  min-width: 180px;
+  min-height: 48px;
+  padding: 12px 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 
@@ -490,6 +504,21 @@
   .advantage-text h2 { font-size: 32px; }
   .services-modules { padding: 60px 0; }
   .advantage-section { padding: 60px 0; }
+  .advantage-buttons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .advantage-buttons .btn-primary,
+  .advantage-buttons .btn-outline-gold {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding: 12px 14px;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -498,4 +527,10 @@
   .module-card { margin-bottom: 8px; }
   .advantage-stat-chip { padding: 8px 12px; }
   .chip-num { font-size: 18px; }
+}
+
+@media (max-width: 380px) {
+  .advantage-buttons {
+    grid-template-columns: 1fr;
+  }
 }

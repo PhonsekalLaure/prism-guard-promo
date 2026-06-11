@@ -2,12 +2,21 @@ import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
+function createSeededRandom(seed) {
+  let value = seed;
+  return () => {
+    value = (value * 1664525 + 1013904223) % 4294967296;
+    return value / 4294967296;
+  };
+}
+
 function GlobeParticles({ count = 350 }) {
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3);
+    const random = createSeededRandom(350);
     for (let i = 0; i < count; i++) {
-      const phi = Math.acos(2 * Math.random() - 1);
-      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * random() - 1);
+      const theta = random() * Math.PI * 2;
       const r = 1.55;
       pos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
       pos[i * 3 + 1] = r * Math.cos(phi);

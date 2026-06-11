@@ -273,6 +273,12 @@ select.form-control optgroup,
   object-fit: cover;
 }
 
+.avatar-upload-preview.document-preview {
+  width: 96px;
+  height: 64px;
+  border-radius: 6px;
+}
+
 .avatar-upload-copy {
   display: flex;
   flex-direction: column;
@@ -408,6 +414,102 @@ select.select-input {
 .textarea-readonly {
   min-height: 120px;
   align-items: flex-start !important;
+}
+
+.review-image-field {
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.review-confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.review-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.review-section-heading {
+  font-family: var(--font-tech);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.review-avatar-row .review-image-field {
+  min-height: 112px;
+  padding: 18px;
+  background: linear-gradient(135deg, rgba(230, 178, 21, 0.1), rgba(255, 255, 255, 0.04));
+  border-color: rgba(230, 178, 21, 0.28);
+}
+
+.review-avatar-row .review-avatar-preview {
+  width: 84px;
+  height: 84px;
+  flex-basis: 84px;
+}
+
+.review-avatar-row .review-image-copy strong {
+  font-size: 14px;
+}
+
+.review-divider {
+  width: 100%;
+  margin: 2px 0;
+  grid-column: auto;
+}
+
+.review-avatar-preview {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: rgba(230, 178, 21, 0.12);
+  border: 1px solid rgba(230, 178, 21, 0.35);
+  color: var(--gold);
+}
+
+.review-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.review-image-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-image-copy strong {
+  color: #f0f0f0;
+  font-family: var(--font-tech);
+  font-size: 13px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.review-image-copy small {
+  color: rgba(255, 255, 255, 0.52);
+  font-family: var(--font-tech);
+  font-size: 11px;
+  font-weight: 700;
 }
 
 /* Buttons */
@@ -554,6 +656,15 @@ select.select-input {
     grid-column: span 1;
   }
 
+  .review-confirmation {
+    gap: 18px;
+  }
+
+  .review-avatar-row .review-image-field,
+  .review-image-field {
+    align-items: flex-start;
+  }
+
   .booking-actions {
     flex-direction: column;
     gap: 14px;
@@ -580,6 +691,15 @@ select.select-input {
   }
   .booking-header-left h2 {
     font-size: 18px;
+  }
+  .review-avatar-row .review-image-field {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .review-avatar-row .review-avatar-preview {
+    width: 76px;
+    height: 76px;
+    flex-basis: 76px;
   }
 }
 
