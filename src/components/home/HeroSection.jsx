@@ -81,14 +81,18 @@ export default function HeroSection() {
 
       {/* Carousel */}
       {slides.map((slide, i) => (
-        <img
+        <div
           key={slide.id}
           className={`carousel-slide ${i === current ? 'active' : ''}`}
-          src={slide.image_url}
-          alt=""
           aria-hidden="true"
-          onError={() => handleImageError(slide)}
-        />
+        >
+          <img
+            className="carousel-slide-image"
+            src={slide.image_url}
+            alt=""
+            onError={() => handleImageError(slide)}
+          />
+        </div>
       ))}
 
       <div className="hero-overlay" />
