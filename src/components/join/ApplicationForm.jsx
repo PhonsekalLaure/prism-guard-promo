@@ -71,6 +71,7 @@ const labels = {
 const namePattern = /^[A-Za-z\u00d1\u00f1 .'-]+$/;
 const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const licensePattern = /^[A-Za-z0-9 -]+$/;
+const securityLicensePattern = /^(?=.{6,20}$)(?=.*\d)[A-Z]{2,5}(?:-[A-Z0-9]{2,8}){1,3}$/;
 const maxImageUploadSizeBytes = 5 * 1024 * 1024;
 const suffixOptions = ['Jr.', 'Sr.', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
@@ -137,6 +138,7 @@ export default function ApplicationForm({ onCancel }) {
     if (type === 'years') nextValue = value.replace(/\D/g, '').slice(0, 2);
     if (type === 'decimal' || type === 'number') nextValue = value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
     if (type === 'phone') nextValue = value.replace(/\D/g, '').slice(0, 10);
+    if (type === 'securityLicense') nextValue = value.replace(/[^A-Za-z0-9-]/g, '').toUpperCase().slice(0, 20);
     if (type === 'license') nextValue = value.replace(/[^A-Za-z0-9 -]/g, '').toUpperCase();
     setValue(field, nextValue);
   };
@@ -241,7 +243,7 @@ export default function ApplicationForm({ onCancel }) {
     }
     if (field === 'licenseNumber' && text) {
       if (!licensePattern.test(text)) return 'Use letters, numbers, spaces, and hyphens only.';
-      if (text.length < 6 || text.length > 24 || !/\d/.test(text)) return 'Enter a valid Philippine security license number. Example: LSG-2026-000123.';
+      if (!securityLicensePattern.test(text)) return 'Enter a valid security license number. Example: LSG-2026-000123, SG-2026-0001, or LIC-123.';
     }
     if (field === 'licenseExpiryDate' && text && text < today) return 'License expiry date cannot be earlier than today.';
     if (['avatarFile', 'licensePhotoFile'].includes(field)) {
@@ -496,8 +498,8 @@ export default function ApplicationForm({ onCancel }) {
                 <div className="divider-line" />
                 <div className="form-group col-span-3">
                   <label>LICENSE NUMBER <span className="req">*</span></label>
-                  <input className="form-control" value={formData.licenseNumber} onChange={(e) => handleTextChange('licenseNumber', e.target.value, 'license')} placeholder="LSG-2026-000123" />
-                  <p className="field-hint">Example: LSG-2026-000123</p>
+                  <input className="form-control" maxLength={20} value={formData.licenseNumber} onChange={(e) => handleTextChange('licenseNumber', e.target.value, 'securityLicense')} placeholder="LSG-2026-000123" />
+                  <p className="field-hint">Example: LSG-2026-000123, SG-2026-0001, or LIC-123</p>
                   <FieldError message={errors.licenseNumber} />
                 </div>
                 <div className="form-group col-span-3">
