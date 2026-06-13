@@ -51,7 +51,7 @@ export function getApplicantHeightError(gender, heightCm) {
   }
   if (numericHeight < minimumHeight) {
     const heightLabel = normalizedGender === 'male' ? "5'4\"" : "5'2\"";
-    return `Applicant must be at least ${heightLabel} (${minimumHeight} cm) tall.`;
+    return `Minimum height requirement for ${normalizedGender === 'male' ? 'male' : 'female'} applicants is ${heightLabel} (${minimumHeight} cm).`;
   }
   return '';
 }
