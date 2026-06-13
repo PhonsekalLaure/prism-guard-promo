@@ -243,7 +243,7 @@ export default function ApplicationForm({ onCancel }) {
     }
     if (field === 'licenseNumber' && text) {
       if (!licensePattern.test(text)) return 'Use letters, numbers, spaces, and hyphens only.';
-      if (!securityLicensePattern.test(text)) return 'Enter a valid security license number. Example: LSG-2026-000123, SG-2026-0001, or LIC-123.';
+      if (!securityLicensePattern.test(text)) return 'Enter a valid security license number.';
     }
     if (field === 'licenseExpiryDate' && text && text < today) return 'License expiry date cannot be earlier than today.';
     if (['avatarFile', 'licensePhotoFile'].includes(field)) {
@@ -499,7 +499,6 @@ export default function ApplicationForm({ onCancel }) {
                 <div className="form-group col-span-3">
                   <label>LICENSE NUMBER <span className="req">*</span></label>
                   <input className="form-control" maxLength={20} value={formData.licenseNumber} onChange={(e) => handleTextChange('licenseNumber', e.target.value, 'securityLicense')} placeholder="LSG-2026-000123" />
-                  <p className="field-hint">Example: LSG-2026-000123, SG-2026-0001, or LIC-123</p>
                   <FieldError message={errors.licenseNumber} />
                 </div>
                 <div className="form-group col-span-3">
