@@ -40,13 +40,12 @@ const initialForm = {
   employmentType: 'Regular',
   yearsExperience: '',
   licenseNumber: '',
-  badgeNumber: '',
   licenseExpiryDate: '',
 };
 
 const stepFields = {
   1: ['firstName', 'lastName', 'dateOfBirth', 'gender', 'heightCm', 'phoneNumber', 'email', 'residentialAddress', 'avatarFile'],
-  2: ['positionApplied', 'employmentType', 'yearsExperience', 'licenseNumber', 'badgeNumber', 'licenseExpiryDate', 'licensePhotoFile'],
+  2: ['positionApplied', 'employmentType', 'yearsExperience', 'licenseNumber', 'licenseExpiryDate', 'licensePhotoFile'],
 };
 
 const labels = {
@@ -66,14 +65,14 @@ const labels = {
   employmentType: 'Employment type',
   yearsExperience: 'Years of security experience',
   licenseNumber: 'License number',
-  badgeNumber: 'Badge number',
   licenseExpiryDate: 'License expiry date',
 };
 
 const namePattern = /^[A-Za-z\u00d1\u00f1 .'-]+$/;
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const licensePattern = /^[A-Za-z0-9 -]+$/;
 const maxImageUploadSizeBytes = 5 * 1024 * 1024;
+const suffixOptions = ['Jr.', 'Sr.', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
 function FieldError({ message }) {
   return message ? <p className="field-error">{message}</p> : null;
@@ -134,6 +133,8 @@ export default function ApplicationForm({ onCancel }) {
   const handleTextChange = (field, value, type = 'text') => {
     let nextValue = value;
     if (type === 'name') nextValue = value.replace(/[^A-Za-z\u00d1\u00f1 .'-]/g, '');
+    if (type === 'height') nextValue = value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1').slice(0, 6);
+    if (type === 'years') nextValue = value.replace(/\D/g, '').slice(0, 2);
     if (type === 'decimal' || type === 'number') nextValue = value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
     if (type === 'phone') nextValue = value.replace(/\D/g, '').slice(0, 10);
     if (type === 'license') nextValue = value.replace(/[^A-Za-z0-9 -]/g, '').toUpperCase();
@@ -235,13 +236,12 @@ export default function ApplicationForm({ onCancel }) {
     if (field === 'yearsExperience' && text && (Number(text) < 0 || Number(text) > 60)) {
       return 'Years of experience must be between 0 and 60.';
     }
+    if (field === 'suffix' && text && !suffixOptions.includes(text)) {
+      return 'Select a valid suffix.';
+    }
     if (field === 'licenseNumber' && text) {
       if (!licensePattern.test(text)) return 'Use letters, numbers, spaces, and hyphens only.';
       if (text.length < 6 || text.length > 24 || !/\d/.test(text)) return 'Enter a valid Philippine security license number. Example: LSG-2026-000123.';
-    }
-    if (field === 'badgeNumber' && text) {
-      if (!licensePattern.test(text)) return 'Use letters, numbers, spaces, and hyphens only.';
-      if (text.length < 4 || text.length > 20 || !/\d/.test(text)) return 'Enter a valid badge number. Example: PG-000123.';
     }
     if (field === 'licenseExpiryDate' && text && text < today) return 'License expiry date cannot be earlier than today.';
     if (['avatarFile', 'licensePhotoFile'].includes(field)) {
@@ -360,7 +360,12 @@ export default function ApplicationForm({ onCancel }) {
                 </div>
                 <div className="form-group">
                   <label>SUFFIX</label>
-                  <input className="form-control" value={formData.suffix} onChange={(e) => handleTextChange('suffix', e.target.value, 'license')} placeholder="JR" />
+                  <select className="form-control select-input" value={formData.suffix} onChange={(e) => setValue('suffix', e.target.value)}>
+                    <option value="">NONE</option>
+                    {suffixOptions.map((suffix) => (
+                      <option key={suffix} value={suffix}>{suffix}</option>
+                    ))}
+                  </select>
                   <FieldError message={errors.suffix} />
                 </div>
                 <div className="form-group col-span-2">
@@ -379,7 +384,7 @@ export default function ApplicationForm({ onCancel }) {
                 </div>
                 <div className="form-group col-span-2">
                   <label>HEIGHT (CM) <span className="req">*</span></label>
-                  <input className="form-control" inputMode="decimal" value={formData.heightCm} onChange={(e) => handleTextChange('heightCm', e.target.value, 'decimal')} placeholder="170" />
+                  <input className="form-control" inputMode="decimal" maxLength={6} value={formData.heightCm} onChange={(e) => handleTextChange('heightCm', e.target.value, 'height')} placeholder="170" />
                   <FieldError message={errors.heightCm} />
                 </div>
                 <div className="form-group col-span-3">
@@ -464,7 +469,7 @@ export default function ApplicationForm({ onCancel }) {
                 </div>
                 <div className="form-group col-span-2">
                   <label>YEARS OF EXPERIENCE <span className="req">*</span></label>
-                  <input className="form-control" inputMode="decimal" value={formData.yearsExperience} onChange={(e) => handleTextChange('yearsExperience', e.target.value, 'number')} placeholder="0" />
+                  <input className="form-control" inputMode="numeric" maxLength={2} value={formData.yearsExperience} onChange={(e) => handleTextChange('yearsExperience', e.target.value, 'years')} placeholder="0" />
                   <FieldError message={errors.yearsExperience} />
                 </div>
                 <div className="form-group col-span-3">
@@ -489,19 +494,13 @@ export default function ApplicationForm({ onCancel }) {
                   </select>
                 </div>
                 <div className="divider-line" />
-                <div className="form-group col-span-2">
+                <div className="form-group col-span-3">
                   <label>LICENSE NUMBER <span className="req">*</span></label>
                   <input className="form-control" value={formData.licenseNumber} onChange={(e) => handleTextChange('licenseNumber', e.target.value, 'license')} placeholder="LSG-2026-000123" />
                   <p className="field-hint">Example: LSG-2026-000123</p>
                   <FieldError message={errors.licenseNumber} />
                 </div>
-                <div className="form-group col-span-2">
-                  <label>BADGE NUMBER <span className="req">*</span></label>
-                  <input className="form-control" value={formData.badgeNumber} onChange={(e) => handleTextChange('badgeNumber', e.target.value, 'license')} placeholder="PG-000123" />
-                  <p className="field-hint">Example: PG-000123</p>
-                  <FieldError message={errors.badgeNumber} />
-                </div>
-                <div className="form-group col-span-2">
+                <div className="form-group col-span-3">
                   <label>LICENSE EXPIRY DATE <span className="req">*</span></label>
                   <input type="date" className="form-control date-input" value={formData.licenseExpiryDate} min={today} onChange={(e) => setValue('licenseExpiryDate', e.target.value)} />
                   <FieldError message={errors.licenseExpiryDate} />
@@ -586,9 +585,8 @@ export default function ApplicationForm({ onCancel }) {
                     <ReviewField label="POSITION APPLIED" value={formData.positionApplied} className="col-span-2" />
                     <ReviewField label="EMPLOYMENT TYPE" value={formData.employmentType} className="col-span-2" />
                     <ReviewField label="YEARS OF EXPERIENCE" value={`${formData.yearsExperience || 0} year(s)`} className="col-span-2" />
-                    <ReviewField label="LICENSE NUMBER" value={formData.licenseNumber} className="col-span-2" />
-                    <ReviewField label="BADGE NUMBER" value={formData.badgeNumber} className="col-span-2" />
-                    <ReviewField label="LICENSE EXPIRY" value={formData.licenseExpiryDate} className="col-span-2" />
+                    <ReviewField label="LICENSE NUMBER" value={formData.licenseNumber} className="col-span-3" />
+                    <ReviewField label="LICENSE EXPIRY" value={formData.licenseExpiryDate} className="col-span-3" />
                     <ReviewField label="SECURITY LICENSE PHOTO" value={formData.licensePhotoFile?.name} className="col-span-6" />
                   </div>
                 </div>

@@ -34,6 +34,9 @@ const INITIAL_FORM = {
   notes: '',
 };
 
+const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+const MANILA_TIME_ZONE = 'Asia/Manila';
+
 const TIME_SLOT_GROUPS = [
   {
     label: 'Morning',
@@ -44,6 +47,16 @@ const TIME_SLOT_GROUPS = [
     options: ['1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'],
   },
 ];
+
+const TIME_SLOT_MINUTES = {
+  '9:00 AM': 9 * 60,
+  '10:00 AM': 10 * 60,
+  '11:00 AM': 11 * 60,
+  '1:00 PM': 13 * 60,
+  '2:00 PM': 14 * 60,
+  '3:00 PM': 15 * 60,
+  '4:00 PM': 16 * 60,
+};
 
 function getPurposeLabel(value) {
   return PURPOSE_OPTIONS.find((option) => option.value === value)?.label || value;
@@ -63,11 +76,35 @@ function getErrorMessage(error) {
 }
 
 function getTodayIsoDate() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return getManilaDateParts().isoDate;
+}
+
+function getManilaDateParts(now = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: MANILA_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(now).reduce((acc, part) => {
+    acc[part.type] = part.value;
+    return acc;
+  }, {});
+
+  return {
+    isoDate: `${parts.year}-${parts.month}-${parts.day}`,
+    minutes: Number(parts.hour) * 60 + Number(parts.minute),
+  };
+}
+
+function isPastAppointmentSlot(date, timeSlot) {
+  const slotMinutes = TIME_SLOT_MINUTES[timeSlot];
+  if (!date || slotMinutes === undefined) return false;
+  const manilaNow = getManilaDateParts();
+  if (date < manilaNow.isoDate) return true;
+  return date === manilaNow.isoDate && slotMinutes <= manilaNow.minutes;
 }
 
 export default function BookingForm({ onCancel }) {
@@ -83,7 +120,19 @@ export default function BookingForm({ onCancel }) {
   const selectedPurposes = formData.purposes.map(getPurposeLabel).join(', ');
 
   const updateField = (field, value) => {
-    setFormData((current) => ({ ...current, [field]: value }));
+    setFormData((current) => {
+      const next = { ...current, [field]: value };
+      if (
+        (field === 'preferredDate' || field === 'preferredTimeSlot')
+        && isPastAppointmentSlot(
+          field === 'preferredDate' ? value : next.preferredDate,
+          field === 'preferredTimeSlot' ? value : next.preferredTimeSlot
+        )
+      ) {
+        next.preferredTimeSlot = '';
+      }
+      return next;
+    });
     setErrors((current) => ({ ...current, [field]: '' }));
     setSubmitError('');
   };
@@ -114,7 +163,7 @@ export default function BookingForm({ onCancel }) {
       if (!formData.lastName.trim()) nextErrors.lastName = 'Last name is required.';
       if (!formData.email.trim()) {
         nextErrors.email = 'Email address is required.';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      } else if (!EMAIL_REGEX.test(formData.email.trim())) {
         nextErrors.email = 'Enter a valid email address.';
       }
       if (!formData.mobile.trim()) {
@@ -131,7 +180,11 @@ export default function BookingForm({ onCancel }) {
       } else if (formData.preferredDate < minAppointmentDate) {
         nextErrors.preferredDate = 'Preferred date cannot be in the past.';
       }
-      if (!formData.preferredTimeSlot) nextErrors.preferredTimeSlot = 'Preferred time slot is required.';
+      if (!formData.preferredTimeSlot) {
+        nextErrors.preferredTimeSlot = 'Preferred time slot is required.';
+      } else if (isPastAppointmentSlot(formData.preferredDate, formData.preferredTimeSlot)) {
+        nextErrors.preferredTimeSlot = 'Selected time slot is no longer available.';
+      }
     }
 
     setErrors(nextErrors);
@@ -330,7 +383,13 @@ export default function BookingForm({ onCancel }) {
                     {TIME_SLOT_GROUPS.map((group) => (
                       <optgroup label={group.label} key={group.label}>
                         {group.options.map((time) => (
-                          <option value={time} key={time}>{time}</option>
+                          <option
+                            value={time}
+                            key={time}
+                            disabled={isPastAppointmentSlot(formData.preferredDate, time)}
+                          >
+                            {time}
+                          </option>
                         ))}
                       </optgroup>
                     ))}

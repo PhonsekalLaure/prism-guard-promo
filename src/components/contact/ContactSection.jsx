@@ -9,7 +9,7 @@ const INITIAL_FORM = {
   message: '',
 };
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const NAME_REGEX = /^[A-Za-z\u00D1\u00F1 .'-]+$/;
 const BLOCKED_CONTENT_REGEX = /\b(?:https?:\/\/|www\.|[a-z0-9-]+\.(?:com|net|org|io|ph|xyz|info|biz|ru|cn)\b|script|iframe|object|embed|onerror|onload|javascript:|data:text\/html|base64|eval\(|document\.|window\.|<\?php)|<[^>]+>/i;
 
