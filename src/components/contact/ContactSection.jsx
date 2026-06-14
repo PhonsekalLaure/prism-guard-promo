@@ -17,7 +17,7 @@ const infoCards = [
   {
     Icon: MapPin,
     label: 'LOCATION',
-    text: 'Blk2-Lot6 Marbellas St., El Puentebello Subdivision, Fourth Estate, Brgy. San Antonio, Paranaque City, Metro Manila, 1715',
+    text: 'Blk2-Lot6 Marbellas St., El Puentebello Subdivision, Fourth Estate, Brgy. San Antonio, Parañaque City, Metro Manila, 1715',
   },
   {
     Icon: Phone,
@@ -257,7 +257,7 @@ export default function ContactSection() {
               </div>
               <iframe
                 title="Praise Security Location"
-                src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d7726.637204994879!2d121.02547068789391!3d14.466385782729981!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sBlk2-Lot6%20Marbellas%20St.%2C%20El%20Puentebello%20Subdivision%2C%20Fourth%20Estate%2C%20Brgy.%20San%20Antonio%2C%20Paranaque%20City%2C%20Metro%20Manila%2C%201715!5e0!3m2!1sen!2sph!4v1778427300040!5m2!1sen!2sph"
+                src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d7726.637204994879!2d121.02547068789391!3d14.466385782729981!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sBlk2-Lot6%20Marbellas%20St.%2C%20El%20Puentebello%20Subdivision%2C%20Fourth%20Estate%2C%20Brgy.%20San%20Antonio%2C%20Para%C3%B1aque%20City%2C%20Metro%20Manila%2C%201715!5e0!3m2!1sen!2sph!4v1778427300040!5m2!1sen!2sph"
                 width="100%"
                 height="100%"
                 style={{ border: 0, display: 'block' }}

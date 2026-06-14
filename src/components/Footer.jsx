@@ -10,7 +10,7 @@ const quickLinks = [
 const contactInfo = [
   { label: '(02) 8299-344 / 0920-710-5076', href: '/contact' },
   { label: 'praisesecurity@gmail.com', href: '/contact' },
-  { label: 'Paranaque, Philippines', href: '/contact' },
+  { label: 'Parañaque, Philippines', href: '/contact' },
 ];
 
 export default function Footer() {
