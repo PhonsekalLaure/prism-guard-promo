@@ -490,6 +490,14 @@
   .hero-3d-graphic { width: 45%; right: -2%; }
 }
 
+@media (pointer: coarse) and (min-width: 769px) {
+  .hero-3d-graphic {
+    width: 36%;
+    height: 95%;
+    right: 1%;
+  }
+}
+
 @media (max-width: 768px) {
   .services-hero-content h1 { font-size: 32px; }
   .scope-graphic { display: none; }
