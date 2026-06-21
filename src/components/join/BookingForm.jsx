@@ -154,7 +154,7 @@ export default function BookingForm({ onCancel }) {
     setSubmitError('');
   };
 
-  const validateStep = (targetStep) => {
+  const getStepErrors = (targetStep) => {
     const nextErrors = {};
 
     if (targetStep === 1) {
@@ -187,9 +187,16 @@ export default function BookingForm({ onCancel }) {
       }
     }
 
+    return nextErrors;
+  };
+
+  const validateStep = (targetStep) => {
+    const nextErrors = getStepErrors(targetStep);
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
+
+  const isStepComplete = (targetStep) => Object.keys(getStepErrors(targetStep)).length === 0;
 
   const handleNext = () => {
     if (!validateStep(step)) return;
@@ -324,7 +331,7 @@ export default function BookingForm({ onCancel }) {
             </div>
 
             <div className="booking-actions center">
-              <button className="btn-proceed" onClick={handleNext}>PROCEED</button>
+              <button className="btn-proceed" disabled={!isStepComplete(1)} onClick={handleNext}>PROCEED</button>
             </div>
           </div>
         )}
@@ -411,7 +418,7 @@ export default function BookingForm({ onCancel }) {
 
             <div className="booking-actions">
               <button className="btn-back" onClick={handleBack}>BACK</button>
-              <button className="btn-proceed" onClick={handleNext}>PROCEED</button>
+              <button className="btn-proceed" disabled={!isStepComplete(2)} onClick={handleNext}>PROCEED</button>
             </div>
           </div>
         )}
@@ -449,7 +456,7 @@ export default function BookingForm({ onCancel }) {
               </div>
               <div className="form-group">
                 <label>LANDLINE NUMBER (OPTIONAL)</label>
-                <div className="form-control read-only">{formData.landline || 'NONE'}</div>
+                <div className="form-control read-only">{formData.landline || '-'}</div>
               </div>
 
               {/* Purpose — full width */}
@@ -473,7 +480,7 @@ export default function BookingForm({ onCancel }) {
               {/* Notes — full width */}
               <div className="form-group confirmation-full">
                 <label>ADDITIONAL NOTES FOR APPOINTMENT</label>
-                <div className="form-control read-only textarea-readonly">{formData.notes || 'NONE'}</div>
+                <div className="form-control read-only textarea-readonly">{formData.notes || '-'}</div>
               </div>
             </div>
 

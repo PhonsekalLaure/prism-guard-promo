@@ -300,6 +300,42 @@ select.form-control optgroup,
   font-weight: 700;
 }
 
+.applicant-photo-section {
+  margin: 22px 0 28px;
+  padding: 18px;
+  border: 1px solid rgba(230, 178, 21, 0.22);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(230, 178, 21, 0.08), rgba(255, 255, 255, 0.035));
+}
+
+.photo-guidelines-title {
+  margin: 10px 0 6px;
+  color: var(--gold);
+  font-family: var(--font-tech);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.photo-guidelines-list {
+  margin: 0 0 14px 18px;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-family: var(--font-tech);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.profile-photo-upload {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.profile-photo-preview {
+  width: 76px;
+  height: 76px;
+}
 .input-with-prefix {
   display: flex;
   align-items: stretch;
@@ -477,6 +513,16 @@ select.select-input {
   font-size: 14px;
 }
 
+.review-license-row .review-avatar-preview {
+  width: 108px;
+  height: 68px;
+  flex-basis: 108px;
+  border-radius: 6px;
+}
+
+.review-license-row .review-image-field {
+  background: rgba(255, 255, 255, 0.045);
+}
 .review-divider {
   width: 100%;
   margin: 2px 0;
@@ -561,8 +607,14 @@ select.select-input {
   box-shadow: none;
 }
 
+.btn-proceed:disabled {
+  background-color: #6b7280;
+  border-color: #6b7280;
+  color: #d1d5db;
+}
+
 .btn-proceed:disabled:hover {
-  background-color: var(--gold);
+  background-color: #6b7280;
 }
 
 .btn-back {

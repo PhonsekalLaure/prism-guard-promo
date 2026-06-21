@@ -83,12 +83,12 @@ function ReviewField({ label, value, className = '' }) {
   return (
     <div className={`form-group ${className}`}>
       <label>{label}</label>
-      <div className="form-control read-only">{value || 'N/A'}</div>
+      <div className="form-control read-only">{value || '-'}</div>
     </div>
   );
 }
 
-function ReviewImageField({ label, src, fileName, className = '' }) {
+function ReviewImageField({ label, src, fileName, description = 'Image preview', className = '' }) {
   return (
     <div className={`form-group ${className}`}>
       <label>{label}</label>
@@ -97,8 +97,8 @@ function ReviewImageField({ label, src, fileName, className = '' }) {
           {src ? <img src={src} alt={`${label} preview`} /> : <UploadCloud size={24} />}
         </span>
         <span className="review-image-copy">
-          <strong>{fileName || 'N/A'}</strong>
-          <small>Profile picture preview</small>
+          <strong>{fileName || '-'}</strong>
+          <small>{description}</small>
         </span>
       </div>
     </div>
@@ -269,6 +269,12 @@ export default function ApplicationForm({ onCancel }) {
     return Object.keys(nextErrors).length === 0;
   };
 
+  const isStepComplete = (targetStep) => {
+    const fields = [...(stepFields[targetStep] || [])];
+    if (targetStep === 1) fields.push('middleName');
+    return fields.every((field) => !validateField(field, formData[field], targetStep));
+  };
+
   const handleNext = () => {
     if (validateStep()) setStep((current) => Math.min(current + 1, 3));
   };
@@ -343,6 +349,37 @@ export default function ApplicationForm({ onCancel }) {
             <div className="step-content">
               <h3 className="booking-step-title">PERSONAL AND CONTACT DETAILS</h3>
               <span className="required-text">* REQUIRED</span>
+
+              <div className="form-group applicant-photo-section">
+                <label>AVATAR / PROFILE PICTURE <span className="req">*</span></label>
+                <p className="photo-guidelines-title">Photo guidelines</p>
+                <ul className="photo-guidelines-list">
+                  <li>Use a recent 2x2 ID-style photo.</li>
+                  <li>Plain white background only.</li>
+                  <li>Face the camera directly; no cap, mask, sunglasses, or heavy filters.</li>
+                  <li>Use clear lighting and keep the face centered.</li>
+                  <li>Accepted formats: JPG, PNG, or WebP up to 5 MB.</li>
+                </ul>
+                <label className={`avatar-upload profile-photo-upload ${formData.avatarPreview ? 'has-preview' : ''}`}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => handleAvatarChange(event.target.files?.[0])}
+                  />
+                  <span className="avatar-upload-preview profile-photo-preview">
+                    {formData.avatarPreview ? (
+                      <img src={formData.avatarPreview} alt="Avatar preview" />
+                    ) : (
+                      <UploadCloud size={28} />
+                    )}
+                  </span>
+                  <span className="avatar-upload-copy">
+                    <strong>{formData.avatarFile?.name || 'Upload applicant profile picture'}</strong>
+                    <small>Required before proceeding</small>
+                  </span>
+                </label>
+                <FieldError message={errors.avatarFile} />
+              </div>
 
               <div className="grid-6">
                 <div className="form-group col-span-2">
@@ -420,32 +457,10 @@ export default function ApplicationForm({ onCancel }) {
                   />
                   <FieldError message={errors.residentialAddress} />
                 </div>
-                <div className="form-group col-span-6">
-                  <label>AVATAR / PROFILE PICTURE <span className="req">*</span></label>
-                  <label className={`avatar-upload ${formData.avatarPreview ? 'has-preview' : ''}`}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => handleAvatarChange(event.target.files?.[0])}
-                    />
-                    <span className="avatar-upload-preview">
-                      {formData.avatarPreview ? (
-                        <img src={formData.avatarPreview} alt="Avatar preview" />
-                      ) : (
-                        <UploadCloud size={28} />
-                      )}
-                    </span>
-                    <span className="avatar-upload-copy">
-                      <strong>{formData.avatarFile?.name || 'Upload applicant profile picture'}</strong>
-                      <small>JPG, PNG, or WebP up to 5 MB</small>
-                    </span>
-                  </label>
-                  <FieldError message={errors.avatarFile} />
-                </div>
               </div>
 
               <div className="booking-actions center">
-                <button className="btn-proceed" type="button" onClick={handleNext}>PROCEED</button>
+                <button className="btn-proceed" type="button" disabled={!isStepComplete(1)} onClick={handleNext}>PROCEED</button>
               </div>
             </div>
           )}
@@ -532,7 +547,7 @@ export default function ApplicationForm({ onCancel }) {
 
               <div className="booking-actions">
                 <button className="btn-back" type="button" onClick={handleBack}>BACK</button>
-                <button className="btn-proceed" type="button" onClick={handleNext}>PROCEED</button>
+                <button className="btn-proceed" type="button" disabled={!isStepComplete(2)} onClick={handleNext}>PROCEED</button>
               </div>
             </div>
           )}
@@ -547,7 +562,16 @@ export default function ApplicationForm({ onCancel }) {
                   label="AVATAR / PROFILE PICTURE"
                   src={formData.avatarPreview}
                   fileName={formData.avatarFile?.name}
+                  description="Profile picture preview"
                   className="review-avatar-row"
+                />
+
+                <ReviewImageField
+                  label="SECURITY LICENSE PHOTO"
+                  src={formData.licensePhotoPreview}
+                  fileName={formData.licensePhotoFile?.name}
+                  description="Security license photo preview"
+                  className="review-license-row"
                 />
 
                 <div className="divider-line review-divider" />
@@ -588,7 +612,7 @@ export default function ApplicationForm({ onCancel }) {
                     <ReviewField label="YEARS OF EXPERIENCE" value={`${formData.yearsExperience || 0} year(s)`} className="col-span-2" />
                     <ReviewField label="LICENSE NUMBER" value={formData.licenseNumber} className="col-span-3" />
                     <ReviewField label="LICENSE EXPIRY" value={formData.licenseExpiryDate} className="col-span-3" />
-                    <ReviewField label="SECURITY LICENSE PHOTO" value={formData.licensePhotoFile?.name} className="col-span-6" />
+                    <ReviewField label="SECURITY LICENSE PHOTO FILE" value={formData.licensePhotoFile?.name} className="col-span-6" />
                   </div>
                 </div>
               </div>

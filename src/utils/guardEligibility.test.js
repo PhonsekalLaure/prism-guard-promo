@@ -38,8 +38,8 @@ test('accepts applicants inside the guard age range', () => {
 });
 
 test('validates gender-specific minimum heights', () => {
-  assert.equal(getApplicantHeightError('Male', 162.55), 'Applicant must be at least 5\'4" (162.56 cm) tall.');
-  assert.equal(getApplicantHeightError('Female', 157.47), 'Applicant must be at least 5\'2" (157.48 cm) tall.');
+  assert.equal(getApplicantHeightError('Male', 162.55), 'Minimum height requirement for male applicants is 5\'4" (162.56 cm).');
+  assert.equal(getApplicantHeightError('Female', 157.47), 'Minimum height requirement for female applicants is 5\'2" (157.48 cm).');
   assert.equal(getApplicantHeightError(' male ', 162.56), '');
   assert.equal(getApplicantHeightError('FEMALE', 157.48), '');
 });
