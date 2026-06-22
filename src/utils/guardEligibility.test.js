@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   calculateAge,
   getApplicantAgeError,
+  getApplicantBirthDateBounds,
   getApplicantHeightError,
   MAX_GUARD_AGE,
   MIN_GUARD_AGE,
@@ -37,6 +38,31 @@ test('accepts applicants inside the guard age range', () => {
   assert.equal(getApplicantAgeError('2000-01-01'), '');
 });
 
+test('returns applicant birth date input bounds from guard age limits', () => {
+  const originalDate = globalThis.Date;
+  const fixedNow = new originalDate(2026, 5, 22);
+
+  class FixedDate extends originalDate {
+    constructor(...args) {
+      if (args.length === 0) return new originalDate(fixedNow);
+      return new originalDate(...args);
+    }
+
+    static now() {
+      return fixedNow.getTime();
+    }
+  }
+
+  globalThis.Date = FixedDate;
+  try {
+    assert.deepEqual(getApplicantBirthDateBounds(), {
+      min: '1980-06-23',
+      max: '2008-06-22',
+    });
+  } finally {
+    globalThis.Date = originalDate;
+  }
+});
 test('validates gender-specific minimum heights', () => {
   assert.equal(getApplicantHeightError('Male', 162.55), 'Minimum height requirement for male applicants is 5\'4" (162.56 cm).');
   assert.equal(getApplicantHeightError('Female', 157.47), 'Minimum height requirement for female applicants is 5\'2" (157.48 cm).');

@@ -4,6 +4,7 @@ import GoogleAddressAutofill from '@components/join/GoogleAddressAutofill';
 import { submitApplicationRequest } from '@/services/promoClients';
 import {
   getApplicantAgeError,
+  getApplicantBirthDateBounds,
   getApplicantHeightError,
 } from '../../utils/guardEligibility';
 
@@ -16,6 +17,7 @@ function getTodayIsoDate() {
 }
 
 const today = getTodayIsoDate();
+const applicantBirthDateBounds = getApplicantBirthDateBounds();
 
 const initialForm = {
   firstName: '',
@@ -409,7 +411,7 @@ export default function ApplicationForm({ onCancel }) {
                 </div>
                 <div className="form-group col-span-2">
                   <label>DATE OF BIRTH <span className="req">*</span></label>
-                  <input type="date" className="form-control date-input" value={formData.dateOfBirth} max={today} onChange={(e) => setValue('dateOfBirth', e.target.value)} />
+                  <input type="date" className="form-control date-input" value={formData.dateOfBirth} min={applicantBirthDateBounds.min} max={applicantBirthDateBounds.max} onChange={(e) => setValue('dateOfBirth', e.target.value)} />
                   <FieldError message={errors.dateOfBirth} />
                 </div>
                 <div className="form-group col-span-2">
