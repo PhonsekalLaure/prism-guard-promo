@@ -99,8 +99,13 @@ export default function ContactSection() {
   const getErrorMessage = (error) => {
     if (error?.response?.status === 429) {
       const retryAfter = error.response.data?.retryAfterSeconds;
-      return retryAfter
-        ? `Too many contact messages. Please try again in ${retryAfter} seconds.`
+      const retryAfterSeconds = Number(retryAfter);
+      const retryAfterMinutes = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
+        ? Math.max(1, Math.ceil(retryAfterSeconds / 60))
+        : null;
+
+      return retryAfterMinutes
+        ? `Too many contact messages. Please try again in ${retryAfterMinutes} minute${retryAfterMinutes === 1 ? '' : 's'}.`
         : 'Too many contact messages. Please try again later.';
     }
 
