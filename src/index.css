@@ -9,6 +9,7 @@
 @import "@/styles/contact.css";
 @import "@/styles/join.css";
 @import "@/styles/booking.css";
+@import "@/styles/error-page.css";
 
 /* ==================== DESIGN TOKENS ==================== */
 :root {

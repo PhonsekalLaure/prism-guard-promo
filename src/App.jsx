@@ -7,6 +7,7 @@ import OurClients from '@pages/OurClients';
 import AboutUs from '@pages/AboutUs';
 import Contact from '@pages/Contact';
 import JoinTheForce from '@pages/JoinTheForce';
+import NotFoundPage from '@pages/NotFoundPage';
 import LoadingScreen from '@/components/LoadingScreen';
 import ScrollToTop from '@/components/ScrollToTop';
 
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="about" element={<AboutUs />} />
             <Route path="contact" element={<Contact />} />
             <Route path="join-the-force" element={<JoinTheForce />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -11,7 +11,26 @@ const navLinks = [
   { label: 'Join the Force', href: '/join-the-force' },
 ];
 
-const clientLoginUrl = import.meta.env.VITE_CLIENT_LOGIN_URL || 'http://localhost:5173/login';
+const DEFAULT_CLIENT_LOGIN_URL = 'http://localhost:5173/login';
+
+function resolveClientLoginUrl(configuredUrl) {
+  const candidate = (configuredUrl || DEFAULT_CLIENT_LOGIN_URL).trim();
+
+  try {
+    const url = new URL(candidate);
+    const path = url.pathname.replace(/\/+$/, '');
+
+    if (!path) {
+      url.pathname = '/login';
+    }
+
+    return url.toString();
+  } catch {
+    return DEFAULT_CLIENT_LOGIN_URL;
+  }
+}
+
+const clientLoginUrl = resolveClientLoginUrl(import.meta.env.VITE_CLIENT_LOGIN_URL);
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -98,16 +117,7 @@ export default function Navbar() {
       )}
 
       {/* Login Intercept Loading Screen */}
-      {showLoginLoader && (
-        <>
-          <iframe 
-            src={clientLoginUrl} 
-            style={{ display: 'none' }} 
-            title="prefetch-login"
-          />
-          <LoadingScreen onDone={handleLoaderDone} />
-        </>
-      )}
+      {showLoginLoader && <LoadingScreen onDone={handleLoaderDone} />}
     </nav>
   );
 }

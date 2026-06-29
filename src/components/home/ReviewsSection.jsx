@@ -69,8 +69,7 @@ export default function ReviewsSection() {
         setActiveIndex(0);
         setStatus('success');
       })
-      .catch((err) => {
-        console.error('[getPromoServiceReviews Error]:', err);
+      .catch(() => {
         if (isMounted) setStatus('error');
       });
 

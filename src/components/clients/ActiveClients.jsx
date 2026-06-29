@@ -27,8 +27,7 @@ export default function ActiveClients() {
         setStatus('success');
         setPage(0);
       })
-      .catch((err) => {
-        console.error('[getPromoClients Error]:', err);
+      .catch(() => {
         if (isMounted) setStatus('error');
       });
     return () => { isMounted = false; };
